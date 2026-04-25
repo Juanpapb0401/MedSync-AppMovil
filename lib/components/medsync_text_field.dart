@@ -8,6 +8,7 @@ import 'app_colors.dart';
 // isPassword: ojo toggle. errorText: borde rojo + mensaje debajo.
 class MedSyncTextField extends StatefulWidget {
   final String hint;
+  final String? label;
   final TextEditingController controller;
   final IconData? prefixIcon;
   final bool isPassword;
@@ -18,6 +19,7 @@ class MedSyncTextField extends StatefulWidget {
     super.key,
     required this.hint,
     required this.controller,
+    this.label,
     this.prefixIcon,
     this.isPassword = false,
     this.errorText,
@@ -35,7 +37,7 @@ class _MedSyncTextFieldState extends State<MedSyncTextField> {
   Widget build(BuildContext context) {
     final bool hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
 
-    return TextField(
+    final field = TextField(
       controller: widget.controller,
       obscureText: widget.isPassword && _obscureText,
       keyboardType: widget.keyboardType,
@@ -93,6 +95,24 @@ class _MedSyncTextFieldState extends State<MedSyncTextField> {
           borderSide: const BorderSide(color: AppColors.dangerText, width: 1.0),
         ),
       ),
+    );
+
+    if (widget.label == null) return field;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.label!,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        field,
+      ],
     );
   }
 }
