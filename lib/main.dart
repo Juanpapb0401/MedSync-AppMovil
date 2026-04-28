@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/ui/screens/login_screen.dart';
+
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
+import 'features/auth/ui/screens/forgot_password_screen.dart';
+import 'features/auth/ui/screens/forgot_password_sent_screen.dart';
 import 'presentation/screens/components_preview_screen.dart';
 
 const _supabaseUrl = 'https://artnzmzycsnixyzdlovq.supabase.co';
@@ -17,9 +20,9 @@ void main() async {
   if (kDebugMode) await prefs.remove('onboarding_done');
   final onboardingDone = prefs.getBool('onboarding_done') ?? false;
 
-  runApp(MedSyncApp(
-    initialRoute: onboardingDone ? '/auth/login' : '/onboarding',
-  ));
+  runApp(
+    MedSyncApp(initialRoute: onboardingDone ? '/auth/login' : '/onboarding'),
+  );
 }
 
 class MedSyncApp extends StatelessWidget {
@@ -36,18 +39,14 @@ class MedSyncApp extends StatelessWidget {
       routes: {
         '/onboarding': (_) => const OnboardingScreen(),
         '/auth/login': (_) => const LoginScreen(),
-        '/auth/forgot-password': (_) => const Scaffold(
-              body: Center(child: Text('Recuperar contraseña')),
-            ),
-        '/auth/role-selection': (_) => const Scaffold(
-              body: Center(child: Text('Selección de rol')),
-            ),
-        '/rutina': (_) => const Scaffold(
-              body: Center(child: Text('Mi Rutina')),
-            ),
-        '/configurar': (_) => const Scaffold(
-              body: Center(child: Text('Configurar Tratamiento')),
-            ),
+        '/auth/forgot-password': (_) => const ForgotPasswordScreen(),
+        '/auth/forgot-password-sent': (_) => const ForgotPasswordSentScreen(),
+        '/auth/role-selection': (_) =>
+            const Scaffold(body: Center(child: Text('Selección de rol'))),
+        '/rutina': (_) =>
+            const Scaffold(body: Center(child: Text('Mi Rutina'))),
+        '/configurar': (_) =>
+            const Scaffold(body: Center(child: Text('Configurar Tratamiento'))),
         '/dev': (_) => const ComponentsPreviewScreen(),
       },
     );
