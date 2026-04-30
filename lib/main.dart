@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/ui/screens/login_screen.dart';
@@ -9,12 +10,13 @@ import 'features/auth/ui/screens/forgot_password_screen.dart';
 import 'features/auth/ui/screens/forgot_password_sent_screen.dart';
 import 'presentation/screens/components_preview_screen.dart';
 
-const _supabaseUrl = 'https://artnzmzycsnixyzdlovq.supabase.co';
-const _supabaseAnonKey = 'sb_publishable_ccmij37dGxUjZT3EvxWakw_GJW0CUv3';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: _supabaseUrl, anonKey: _supabaseAnonKey);
+  await dotenv.load(fileName: '.env');
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
 
   final prefs = await SharedPreferences.getInstance();
   if (kDebugMode) await prefs.remove('onboarding_done');
