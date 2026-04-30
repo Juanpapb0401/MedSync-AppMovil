@@ -14,6 +14,7 @@ class MedSyncTextField extends StatefulWidget {
   final bool isPassword;
   final String? errorText;
   final TextInputType keyboardType;
+  final int? maxLength;
 
   const MedSyncTextField({
     super.key,
@@ -24,6 +25,7 @@ class MedSyncTextField extends StatefulWidget {
     this.isPassword = false,
     this.errorText,
     this.keyboardType = TextInputType.text,
+    this.maxLength,
   });
 
   @override
@@ -41,6 +43,7 @@ class _MedSyncTextFieldState extends State<MedSyncTextField> {
       controller: widget.controller,
       obscureText: widget.isPassword && _obscureText,
       keyboardType: widget.keyboardType,
+      maxLength: widget.maxLength,
       style: GoogleFonts.poppins(
         fontSize: 16,
         color: AppColors.textPrimary,

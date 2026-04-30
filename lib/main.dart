@@ -8,6 +8,7 @@ import 'features/auth/ui/screens/login_screen.dart';
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
 import 'features/auth/ui/screens/forgot_password_screen.dart';
 import 'features/auth/ui/screens/forgot_password_sent_screen.dart';
+import 'features/auth/ui/screens/otp_verification_screen.dart';
 import 'presentation/screens/components_preview_screen.dart';
 
 void main() async {
@@ -43,6 +44,9 @@ class MedSyncApp extends StatelessWidget {
         '/auth/login': (_) => const LoginScreen(),
         '/auth/forgot-password': (_) => const ForgotPasswordScreen(),
         '/auth/forgot-password-sent': (_) => const ForgotPasswordSentScreen(),
+        '/auth/otp-verification': (_) => const OtpVerificationScreen(),
+        '/auth/create-new-password': (_) =>
+            const Scaffold(body: Center(child: Text('Crear nueva contraseña (HU Compañero)'))),
         '/auth/role-selection': (_) =>
             const Scaffold(body: Center(child: Text('Selección de rol'))),
         '/rutina': (_) =>

@@ -87,10 +87,10 @@ class ForgotPasswordSentScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.07),
+                    color: AppColors.warningBg,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.warningText.withOpacity(0.3),
                     ),
                   ),
                   child: Row(
@@ -98,7 +98,7 @@ class ForgotPasswordSentScreen extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.info_outline,
-                        color: AppColors.primary,
+                        color: AppColors.warningText,
                         size: 22,
                       ),
                       const SizedBox(width: 10),
@@ -107,13 +107,13 @@ class ForgotPasswordSentScreen extends StatelessWidget {
                           text: TextSpan(
                             style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: AppColors.textSecondary,
+                              color: AppColors.warningText.withOpacity(0.8),
                             ),
                             children: [
                               TextSpan(
                                 text: 'Consejo: ',
                                 style: GoogleFonts.poppins(
-                                  color: AppColors.primary,
+                                  color: AppColors.warningText,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
                                 ),
@@ -131,8 +131,14 @@ class ForgotPasswordSentScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 36),
                 MedSyncButton(
-                  label: 'Crear nueva contraseña',
-                  onPressed: () {},
+                  label: 'Ingresar código',
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      '/auth/otp-verification',
+                      arguments: email,
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
                 Center(

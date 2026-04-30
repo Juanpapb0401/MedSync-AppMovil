@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../components/components.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../cubit/forgot_password_cubit.dart';
+import '../bloc/forgot_password_bloc.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -18,8 +18,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ForgotPasswordCubit(),
-      child: BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
+      create: (_) => ForgotPasswordBloc(),
+      child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (context, state) {
           if (state is ForgotPasswordSuccess) {
             Navigator.pushReplacementNamed(
@@ -31,7 +31,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         },
         builder: (context, state) {
           final isLoading = state is ForgotPasswordLoading;
-          final errorText = state is ForgotPasswordError ? state.message : null;
+          final errorText = state is ForgotPasswordError
+              ? (state as ForgotPasswordError).message
+              : null;
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
@@ -106,7 +108,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       // Campo correo
                       MedSyncTextField(
                         label: 'Correo electrónico',
-                        hint: 'paciente@example.com',
+                        hint: 'correo@ejemplo.com',
                         controller: _emailController,
                         prefixIcon: Icons.mail_outline,
                         keyboardType: TextInputType.emailAddress,
@@ -118,9 +120,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         label: 'Enviar enlace de validación',
                         onPressed: isLoading
                             ? null
-                            : () => context
-                                  .read<ForgotPasswordCubit>()
-                                  .sendResetEmail(_emailController.text.trim()),
+                            : () => context.read<ForgotPasswordBloc>().add(
+                                ForgotPasswordRequested(
+                                  _emailController.text.trim(),
+                                ),
+                              ),
                         isLoading: isLoading,
                       ),
                       const SizedBox(height: 32),
