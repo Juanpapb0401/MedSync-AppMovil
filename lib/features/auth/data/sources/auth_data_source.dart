@@ -11,15 +11,15 @@ class AuthDataSource {
     final userId = response.user!.id;
 
     final profile = await Supabase.instance.client
-        .from('profiles')
-        .select('role')
-        .eq('id', userId)
+        .from('profile')
+        .select('type')
+        .eq('email', email)
         .single();
 
     return AppUser(
       id: userId,
       email: email,
-      role: profile['role'] as String,
+      role: profile['type'] as String,
     );
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../components/components.dart';
-import '../cubit/login_cubit.dart';
+import '../bloc/login_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,25 +23,21 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    await context.read<LoginCubit>().login(
-          _emailController.text.trim(),
-          _passwordController.text,
+  void _submit() {
+    context.read<LoginBloc>().add(
+          LoginSubmitEvent(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          ),
         );
-    if (!mounted) return;
-    final state = context.read<LoginCubit>().state;
-    if (state is LoginSuccess) {
-      final route = state.role == 'paciente' ? '/rutina' : '/configurar';
-      Navigator.pushReplacementNamed(context, route);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
+    return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
-        final isLoading = state is LoginLoading;
-        final errorMessage = state is LoginError ? state.message : null;
+        final isLoading = state is LoginLoadingState;
+        final errorMessage = state is LoginFailState ? state.message : null;
 
         return SingleChildScrollView(
           child: Column(
