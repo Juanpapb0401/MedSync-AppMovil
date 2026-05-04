@@ -63,4 +63,81 @@ class AuthDataSource {
 
     return AppUser(id: userId, email: email, role: 'paciente');
   }
+
+  Future<AppUser> registerCaregiver(
+    String fullName,
+    String email,
+    String password, {
+    Uint8List? avatarBytes,
+    String? avatarExt,
+    String? patientCode,
+  }) async {
+    final cleanedCode = patientCode?.trim().toUpperCase();
+
+    if (cleanedCode != null && cleanedCode.isNotEmpty) {
+      final patient = await Supabase.instance.client
+          .from('profile')
+          .select('id, caregiver')
+          .eq('type', 'paciente')
+          .eq('linking_code', cleanedCode)
+          .maybeSingle();
+
+      if (patient == null) {
+        throw Exception('El código del paciente no existe');
+      }
+
+      if (patient['caregiver'] != null) {
+        throw Exception('Este código ya fue vinculado a otro cuidador');
+      }
+    }
+
+    final response = await Supabase.instance.client.auth.signUp(
+      email: email,
+      password: password,
+      data: {'full_name': fullName, 'type': 'cuidador'},
+    );
+
+    final userId = response.user!.id;
+
+    if (avatarBytes != null && avatarExt != null) {
+      try {
+        final fileName =
+            '$userId-${DateTime.now().millisecondsSinceEpoch}.$avatarExt';
+
+        await Supabase.instance.client.storage
+            .from('avatars')
+            .uploadBinary(fileName, avatarBytes);
+
+        final avatarUrl = Supabase.instance.client.storage
+            .from('avatars')
+            .getPublicUrl(fileName);
+
+        await Supabase.instance.client.auth.updateUser(
+          UserAttributes(data: {'avatar_url': avatarUrl}),
+        );
+
+        await Supabase.instance.client
+            .from('profile')
+            .update({'avatar_url': avatarUrl})
+            .eq('id', userId);
+      } catch (_) {
+        // Optional avatar: do not block registration if upload fails.
+      }
+    }
+
+    if (cleanedCode != null && cleanedCode.isNotEmpty) {
+      final updated = await Supabase.instance.client
+          .from('profile')
+          .update({'caregiver': userId})
+          .eq('linking_code', cleanedCode)
+          .eq('type', 'paciente')
+          .select('id');
+
+      if (updated is List && updated.isEmpty) {
+        throw Exception('No se pudo vincular al paciente');
+      }
+    }
+
+    return AppUser(id: userId, email: email, role: 'cuidador');
+  }
 }

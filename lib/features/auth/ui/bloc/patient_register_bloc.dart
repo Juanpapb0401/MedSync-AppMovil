@@ -59,6 +59,22 @@ class PatientRegisterBloc
   }
 
   String _friendlyError(dynamic e) {
-    return e.toString();
+    final msg = e.toString().toLowerCase();
+    if (msg.contains('over_email_send_rate_limit') ||
+        msg.contains('rate limit exceeded') ||
+        msg.contains('email rate limit') ||
+        msg.contains('429')) {
+      return 'Has solicitado demasiados correos para este email. Espera unos minutos o usa otro correo.';
+    }
+    if (msg.contains('email already') ||
+        msg.contains('already registered') ||
+        msg.contains('user already exists') ||
+        msg.contains('already in use')) {
+      return 'Este correo ya está registrado. Inicia sesión o usa otro correo.';
+    }
+    if (msg.contains('invalid email')) {
+      return 'Ingresa un correo electrónico válido.';
+    }
+    return 'No se pudo crear la cuenta. Inténtalo de nuevo';
   }
 }

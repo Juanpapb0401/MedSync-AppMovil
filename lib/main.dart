@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/ui/screens/login_screen.dart';
 import 'features/auth/ui/screens/code_binding_screen.dart';
+import 'features/auth/ui/screens/caregiver_register_screen.dart';
 import 'features/profile/ui/screens/caregiver_profile_screen.dart';
 import 'features/profile/ui/screens/patient_profile_screen.dart';
 import 'features/treatment/ui/screens/configurar_screen.dart';
@@ -15,6 +16,7 @@ import 'features/auth/ui/screens/forgot_password_screen.dart';
 import 'features/auth/ui/screens/forgot_password_sent_screen.dart';
 import 'features/auth/ui/screens/otp_verification_screen.dart';
 import 'features/auth/ui/screens/patient_register_screen.dart';
+import 'features/auth/ui/screens/role_selection_screen.dart';
 import 'presentation/screens/components_preview_screen.dart';
 
 void main() async {
@@ -49,30 +51,15 @@ class MedSyncApp extends StatelessWidget {
         '/onboarding': (_) => const OnboardingScreen(),
         '/auth/login': (_) => const LoginScreen(),
         '/auth/register-patient': (_) => const PatientRegisterScreen(),
-        '/auth/binding-code': (_) =>
-            const Scaffold(body: Center(child: Text('Código de Vinculación'))),
+        '/auth/register-caregiver': (_) => const CaregiverRegisterScreen(),
+        '/auth/binding-code': (_) => const CodeBindingScreen(),
         '/auth/forgot-password': (_) => const ForgotPasswordScreen(),
         '/auth/forgot-password-sent': (_) => const ForgotPasswordSentScreen(),
         '/auth/otp-verification': (_) => const OtpVerificationScreen(),
         '/auth/create-new-password': (_) => const Scaffold(
           body: Center(child: Text('Crear nueva contraseña (HU Compañero)')),
         ),
-        '/auth/role-selection': (context) => Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Selección de rol (WIP)'),
-                ElevatedButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/auth/register-patient'),
-                  child: const Text('Ir a Registro Paciente'),
-                ),
-              ],
-            ),
-          ),
-        ),
-        '/auth/binding-code': (_) => const CodeBindingScreen(),
+        '/auth/role-selection': (_) => const RoleSelectionScreen(),
         '/code': (_) => const CodeBindingScreen(),
         '/rutina': (_) => const RutinaScreen(),
         '/configurar': (_) => const ConfigurarScreen(),

@@ -19,6 +19,31 @@ class AuthRepoImpl extends AuthRepo {
     Uint8List? avatarBytes,
     String? avatarExt,
   }) {
-    return _source.registerPatient(fullName, email, password, avatarBytes: avatarBytes, avatarExt: avatarExt);
+    return _source.registerPatient(
+      fullName,
+      email,
+      password,
+      avatarBytes: avatarBytes,
+      avatarExt: avatarExt,
+    );
+  }
+
+  @override
+  Future<AppUser> registerCaregiver(
+    String fullName,
+    String email,
+    String password, {
+    Uint8List? avatarBytes,
+    String? avatarExt,
+    String? patientCode,
+  }) {
+    return _source.registerCaregiver(
+      fullName,
+      email,
+      password,
+      avatarBytes: avatarBytes,
+      avatarExt: avatarExt,
+      patientCode: patientCode,
+    );
   }
 }

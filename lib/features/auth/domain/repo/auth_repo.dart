@@ -10,4 +10,12 @@ abstract class AuthRepo {
     Uint8List? avatarBytes,
     String? avatarExt,
   });
+  Future<AppUser> registerCaregiver(
+    String fullName,
+    String email,
+    String password, {
+    Uint8List? avatarBytes,
+    String? avatarExt,
+    String? patientCode,
+  });
 }
