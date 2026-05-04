@@ -37,17 +37,15 @@ class _MedSyncTextFieldState extends State<MedSyncTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
+    final bool hasError =
+        widget.errorText != null && widget.errorText!.isNotEmpty;
 
     final field = TextField(
       controller: widget.controller,
       obscureText: widget.isPassword && _obscureText,
       keyboardType: widget.keyboardType,
       maxLength: widget.maxLength,
-      style: GoogleFonts.poppins(
-        fontSize: 16,
-        color: AppColors.textPrimary,
-      ),
+      style: GoogleFonts.poppins(fontSize: 16, color: AppColors.textPrimary),
       decoration: InputDecoration(
         hintText: widget.hint,
         hintStyle: GoogleFonts.poppins(
@@ -61,7 +59,10 @@ class _MedSyncTextFieldState extends State<MedSyncTextField> {
         ),
         filled: true,
         fillColor: AppColors.backgroundSecondary,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 18,
+        ),
         prefixIcon: widget.prefixIcon != null
             ? Icon(widget.prefixIcon, color: AppColors.textMuted, size: 20)
             : null,
