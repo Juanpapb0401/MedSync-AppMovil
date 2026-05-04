@@ -38,7 +38,11 @@ class OtpVerificationBloc
         await _repo.verifyOTP(event.email, event.token);
         emit(OtpVerificationSuccess());
       } catch (e) {
-        emit(OtpVerificationError('Código incorrecto o expirado. Intenta de nuevo.'));
+        emit(
+          OtpVerificationError(
+            'Código incorrecto o expirado. Intenta de nuevo.',
+          ),
+        );
       }
     });
   }

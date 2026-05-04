@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'app_colors.dart';
@@ -7,9 +7,8 @@ import 'app_colors.dart';
 // Círculo grande: fondo #E0F5F3, ícono persona #049B83
 // Botón cámara bottom-right: círculo #049B83, ícono cámara blanco
 // Con imagen: muestra foto circular recortada
-// onImageSelected retorna File
 class AvatarPicker extends StatefulWidget {
-  final void Function(File image) onImageSelected;
+  final void Function(Uint8List imageBytes, String ext) onImageSelected;
 
   const AvatarPicker({super.key, required this.onImageSelected});
 
@@ -18,7 +17,7 @@ class AvatarPicker extends StatefulWidget {
 }
 
 class _AvatarPickerState extends State<AvatarPicker> {
-  File? _image;
+  Uint8List? _imageBytes;
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -27,9 +26,10 @@ class _AvatarPickerState extends State<AvatarPicker> {
       imageQuality: 85,
     );
     if (picked != null) {
-      final File file = File(picked.path);
-      setState(() => _image = file);
-      widget.onImageSelected(file);
+      final bytes = await picked.readAsBytes();
+      final ext = picked.name.split('.').last;
+      setState(() => _imageBytes = bytes);
+      widget.onImageSelected(bytes, ext);
     }
   }
 
@@ -43,8 +43,8 @@ class _AvatarPickerState extends State<AvatarPicker> {
           CircleAvatar(
             radius: 48,
             backgroundColor: AppColors.primaryLight,
-            backgroundImage: _image != null ? FileImage(_image!) : null,
-            child: _image == null
+            backgroundImage: _imageBytes != null ? MemoryImage(_imageBytes!) : null,
+            child: _imageBytes == null
                 ? const Icon(Icons.person, color: AppColors.primary, size: 48)
                 : null,
           ),

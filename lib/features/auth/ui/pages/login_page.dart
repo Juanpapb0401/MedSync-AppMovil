@@ -25,11 +25,11 @@ class _LoginPageState extends State<LoginPage> {
 
   void _submit() {
     context.read<LoginBloc>().add(
-          LoginSubmitEvent(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-          ),
-        );
+      LoginSubmitEvent(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      ),
+    );
   }
 
   @override
