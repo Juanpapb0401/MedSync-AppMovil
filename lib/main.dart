@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/ui/screens/login_screen.dart';
+import 'features/auth/ui/screens/code_binding_screen.dart';
 
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
 import 'features/auth/ui/screens/forgot_password_screen.dart';
@@ -45,10 +46,18 @@ class MedSyncApp extends StatelessWidget {
         '/auth/forgot-password': (_) => const ForgotPasswordScreen(),
         '/auth/forgot-password-sent': (_) => const ForgotPasswordSentScreen(),
         '/auth/otp-verification': (_) => const OtpVerificationScreen(),
-        '/auth/create-new-password': (_) =>
-            const Scaffold(body: Center(child: Text('Crear nueva contraseña (HU Compañero)'))),
+        '/auth/create-new-password': (_) => const Scaffold(
+          body: Center(child: Text('Crear nueva contraseña (HU Compañero)')),
+        ),
         '/auth/role-selection': (_) =>
             const Scaffold(body: Center(child: Text('Selección de rol'))),
+        '/code': (context) {
+          final arguments = ModalRoute.of(context)?.settings.arguments;
+          final code = arguments is String && arguments.trim().isNotEmpty
+              ? arguments.trim()
+              : null;
+          return CodeBindingScreen(code: code);
+        },
         '/rutina': (_) =>
             const Scaffold(body: Center(child: Text('Mi Rutina'))),
         '/configurar': (_) =>
