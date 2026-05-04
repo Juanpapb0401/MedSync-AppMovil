@@ -14,6 +14,7 @@ import 'features/auth/ui/screens/forgot_password_screen.dart';
 import 'features/auth/ui/screens/forgot_password_sent_screen.dart';
 import 'features/auth/ui/screens/otp_verification_screen.dart';
 import 'features/auth/ui/screens/patient_register_screen.dart';
+import 'features/auth/ui/screens/role_selection_screen.dart';
 import 'presentation/screens/components_preview_screen.dart';
 
 void main() async {
@@ -56,21 +57,7 @@ class MedSyncApp extends StatelessWidget {
         '/auth/create-new-password': (_) => const Scaffold(
           body: Center(child: Text('Crear nueva contraseña (HU Compañero)')),
         ),
-        '/auth/role-selection': (context) => Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Selección de rol (WIP)'),
-                ElevatedButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/auth/register-patient'),
-                  child: const Text('Ir a Registro Paciente'),
-                ),
-              ],
-            ),
-          ),
-        ),
+        '/auth/role-selection': (_) => const RoleSelectionScreen(),
         '/rutina': (_) => const RutinaScreen(),
         '/configurar': (_) => const ConfigurarScreen(),
         '/profile/caregiver': (_) => const CaregiverProfileScreen(),
