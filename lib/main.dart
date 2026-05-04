@@ -55,13 +55,7 @@ class MedSyncApp extends StatelessWidget {
         ),
         '/auth/role-selection': (_) =>
             const Scaffold(body: Center(child: Text('Selección de rol'))),
-        '/code': (context) {
-          final arguments = ModalRoute.of(context)?.settings.arguments;
-          final code = arguments is String && arguments.trim().isNotEmpty
-              ? arguments.trim()
-              : null;
-          return CodeBindingScreen(code: code);
-        },
+        '/code': (_) => const CodeBindingScreen(),
         '/rutina': (_) => const RutinaScreen(),
         '/configurar': (_) => const ConfigurarScreen(),
         '/profile/caregiver': (_) => const CaregiverProfileScreen(),

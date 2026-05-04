@@ -18,6 +18,7 @@ Tabla central de usuarios. Se referencia a sí misma para la vinculación pacien
 | email | VARCHAR(30) | NOT NULL, UNIQUE |
 | password | VARCHAR(30) | NOT NULL |
 | type | VARCHAR(15) | NOT NULL, CHECK ('paciente', 'cuidador') |
+| linking_code | VARCHAR(10) | UNIQUE, código de vinculación del paciente generado una sola vez |
 | caregiver | VARCHAR(10) | FK → profile(id) |
 
 ### profile_type

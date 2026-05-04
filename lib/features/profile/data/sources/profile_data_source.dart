@@ -17,6 +17,20 @@ class ProfileDataSource {
 
     final profileId = data['id'] as String;
     final type = data['type'] as String;
+    final storedLinkingCode = data['linking_code'] as String?;
+    final linkingCode = _resolveLinkingCode(profileId, storedLinkingCode);
+
+    if (type == 'paciente' && storedLinkingCode != linkingCode) {
+      try {
+        await _client
+            .from('profile')
+            .update({'linking_code': linkingCode})
+            .eq('id', profileId);
+      } catch (_) {
+        // Best-effort persistence: the screen can still render the code even if
+        // the database update is blocked by permissions or the column is pending.
+      }
+    }
 
     // In Supabase, auth.users.id and profile.id are the same UUID when the
     // profile was created via the auth trigger. We try both so the query works
@@ -31,13 +45,13 @@ class ProfileDataSource {
       // Try the auth UUID first; fall back to profile.id if different.
       var patients = await _client
           .from('profile')
-          .select('id, full_name')
+          .select('id, full_name, linking_code')
           .eq('caregiver', lookupId);
 
       if ((patients as List).isEmpty && lookupId != profileId) {
         patients = await _client
             .from('profile')
-            .select('id, full_name')
+            .select('id, full_name, linking_code')
             .eq('caregiver', profileId);
       }
 
@@ -46,6 +60,10 @@ class ProfileDataSource {
         linkedPatient = LinkedPatientModel(
           id: p['id'] as String,
           fullName: p['full_name'] as String,
+          linkingCode: _resolveLinkingCode(
+            p['id'] as String,
+            p['linking_code'] as String?,
+          ),
         );
       }
     } else {
@@ -66,8 +84,24 @@ class ProfileDataSource {
       fullName: data['full_name'] as String,
       email: data['email'] as String,
       type: type,
+      linkingCode: linkingCode,
       linkedPatient: linkedPatient,
       linkedCaregiverName: linkedCaregiverName,
     );
+  }
+
+  String _resolveLinkingCode(String profileId, String? storedLinkingCode) {
+    final cleanedStoredCode = storedLinkingCode?.trim();
+    if (cleanedStoredCode != null && cleanedStoredCode.isNotEmpty) {
+      return cleanedStoredCode;
+    }
+
+    final digits = profileId.replaceAll(RegExp(r'\D'), '');
+    final codeDigits = digits.isEmpty
+        ? '000'
+        : digits.length >= 3
+        ? digits.substring(0, 3)
+        : digits.padLeft(3, '0');
+    return 'MED-$codeDigits';
   }
 }
