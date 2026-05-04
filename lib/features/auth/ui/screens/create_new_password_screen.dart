@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../../components/components.dart';
 import '../bloc/create_new_password_bloc.dart';
 
@@ -64,7 +66,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
           if (state is CreateNewPasswordError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text((state as CreateNewPasswordError).message),
+                content: Text(state.message),
                 backgroundColor: AppColors.dangerText,
               ),
             );
@@ -102,11 +104,10 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                                 borderRadius: BorderRadius.circular(22),
                               ),
                               child: Center(
-                                child: Image.asset(
-                                  'assets/images/logo.png',
+                                child: SvgPicture.asset(
+                                  'assets/images/logo.svg',
                                   width: 40,
                                   height: 40,
-                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
@@ -130,7 +131,6 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                           fontWeight: FontWeight.w700,
                           color: AppColors.textPrimary,
                         ),
-                        textAlign: TextAlign.left,
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -139,7 +139,6 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                           fontSize: 15,
                           color: AppColors.textSecondary,
                         ),
-                        textAlign: TextAlign.left,
                       ),
                       const SizedBox(height: 28),
                       MedSyncTextField(

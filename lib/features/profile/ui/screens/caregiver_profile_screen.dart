@@ -307,7 +307,7 @@ class _LinkedPatientCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Código: ${_shortUuid(patient.id)}',
+                    'Código: ${patient.linkingCode}',
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -685,12 +685,6 @@ class _Card extends StatelessWidget {
       child: child,
     );
   }
-}
-
-/// Returns the first two UUID segments: `xxxxxxxx-xxxx`
-String _shortUuid(String uuid) {
-  final parts = uuid.split('-');
-  return '${parts[0]}-${parts[1]}';
 }
 
 class _SectionLabel extends StatelessWidget {

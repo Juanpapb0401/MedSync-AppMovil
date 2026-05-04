@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../data/repo/forgot_password_repo.dart';
 
-// Events
 abstract class CreateNewPasswordEvent {}
 
 class CreateNewPasswordRequested extends CreateNewPasswordEvent {
@@ -10,7 +10,6 @@ class CreateNewPasswordRequested extends CreateNewPasswordEvent {
   CreateNewPasswordRequested(this.newPassword);
 }
 
-// States
 abstract class CreateNewPasswordState {}
 
 class CreateNewPasswordInitial extends CreateNewPasswordState {}
@@ -25,7 +24,6 @@ class CreateNewPasswordError extends CreateNewPasswordState {
   CreateNewPasswordError(this.message);
 }
 
-// Bloc
 class CreateNewPasswordBloc
     extends Bloc<CreateNewPasswordEvent, CreateNewPasswordState> {
   final ForgotPasswordRepo _repo = ForgotPasswordRepo();
@@ -36,8 +34,12 @@ class CreateNewPasswordBloc
       try {
         await _repo.updatePassword(event.newPassword);
         emit(CreateNewPasswordSuccess());
-      } catch (e) {
-        emit(CreateNewPasswordError('Error al actualizar la contraseña. Intenta de nuevo.'));
+      } catch (_) {
+        emit(
+          CreateNewPasswordError(
+            'Error al actualizar la contraseña. Intenta de nuevo.',
+          ),
+        );
       }
     });
   }

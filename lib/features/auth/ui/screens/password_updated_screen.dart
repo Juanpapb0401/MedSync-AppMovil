@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../../components/components.dart';
 
 class PasswordUpdatedScreen extends StatelessWidget {
@@ -17,7 +18,6 @@ class PasswordUpdatedScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 60),
-                // Ícono de check verde en círculo claro
                 Center(
                   child: Container(
                     width: 80,
@@ -34,23 +34,17 @@ class PasswordUpdatedScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 32),
-                // Logo y nombre
                 Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        'MedSync',
-                        style: GoogleFonts.poppins(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'MedSync',
+                    style: GoogleFonts.poppins(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
-                // Título
                 Text(
                   'Contraseña actualizada',
                   style: GoogleFonts.poppins(
@@ -61,7 +55,6 @@ class PasswordUpdatedScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                // Subtítulo
                 Text(
                   'Tu contraseña ha sido restablecida exitosamente. Ahora puedes iniciar sesión con tu nueva contraseña.',
                   style: GoogleFonts.poppins(
@@ -71,7 +64,6 @@ class PasswordUpdatedScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
-                // Botón primario
                 MedSyncButton(
                   label: 'Ir al inicio de sesión',
                   onPressed: () {
