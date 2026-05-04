@@ -587,7 +587,8 @@ class _BottomNav extends StatelessWidget {
                 icon: Icons.tune,
                 label: 'Configurar',
                 isActive: false,
-                onTap: () => Navigator.pushReplacementNamed(context, '/configurar'),
+                onTap: () =>
+                    Navigator.pushReplacementNamed(context, '/configurar'),
               ),
               _NavItem(
                 icon: Icons.grid_view_rounded,

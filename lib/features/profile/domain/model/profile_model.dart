@@ -3,8 +3,8 @@ class ProfileModel {
   final String fullName;
   final String email;
   final String type;
-  final LinkedPatientModel? linkedPatient;   // caregiver: their linked patient
-  final String? linkedCaregiverName;         // patient: their caregiver's name
+  final LinkedPatientModel? linkedPatient; // caregiver: their linked patient
+  final String? linkedCaregiverName; // patient: their caregiver's name
 
   const ProfileModel({
     required this.id,

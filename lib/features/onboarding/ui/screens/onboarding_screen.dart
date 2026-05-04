@@ -9,9 +9,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: const SafeArea(
-        child: OnboardingContent(),
-      ),
+      body: const SafeArea(child: OnboardingContent()),
     );
   }
 }
