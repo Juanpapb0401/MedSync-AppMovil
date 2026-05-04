@@ -24,10 +24,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       child: BlocConsumer<OtpVerificationBloc, OtpVerificationState>(
         listener: (context, state) {
           if (state is OtpVerificationSuccess) {
-            // Navegar a la pantalla de crear nueva contraseña (HU del compañero)
+            // Navegar a la pantalla de crear nueva contraseña pasando email y token
             Navigator.pushReplacementNamed(
               context,
               '/auth/create-new-password',
+              arguments: {
+                'email': email,
+                'token': _codeController.text.trim(),
+              },
             );
           }
         },
