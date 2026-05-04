@@ -20,17 +20,20 @@ const _slides = [
   _SlideData(
     svgAsset: 'assets/images/onboarding/slide1.svg',
     title: '¿Olvidaste cómo tomar tu medicamento?',
-    subtitle: 'MedSync te recuerda cada toma en el momento exacto, sin que tengas que preocuparte.',
+    subtitle:
+        'MedSync te recuerda cada toma en el momento exacto, sin que tengas que preocuparte.',
   ),
   _SlideData(
     svgAsset: 'assets/images/onboarding/slide2.svg',
     title: 'Tu cuidador lo organiza todo',
-    subtitle: 'El cuidador configura horarios y dosis para que tú solo confirmes cada toma.',
+    subtitle:
+        'El cuidador configura horarios y dosis para que tú solo confirmes cada toma.',
   ),
   _SlideData(
     svgAsset: 'assets/images/onboarding/slide3.svg',
     title: 'Tu celular te avisa en el momento exacto',
-    subtitle: 'Alarmas precisas y recordatorios para que nunca olvides ninguna toma.',
+    subtitle:
+        'Alarmas precisas y recordatorios para que nunca olvides ninguna toma.',
   ),
 ];
 
@@ -132,11 +135,7 @@ class _OnboardingSlide extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            data.svgAsset,
-            width: 260,
-            height: 220,
-          ),
+          SvgPicture.asset(data.svgAsset, width: 260, height: 220),
           const SizedBox(height: 40),
           Text(
             data.title,

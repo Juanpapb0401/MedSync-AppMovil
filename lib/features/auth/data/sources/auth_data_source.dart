@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/domain/model/app_user.dart';
 
@@ -16,10 +17,50 @@ class AuthDataSource {
         .eq('email', email)
         .single();
 
-    return AppUser(
-      id: userId,
+    return AppUser(id: userId, email: email, role: profile['type'] as String);
+  }
+
+  Future<AppUser> registerPatient(
+    String fullName,
+    String email,
+    String password, {
+    Uint8List? avatarBytes,
+    String? avatarExt,
+  }) async {
+    final response = await Supabase.instance.client.auth.signUp(
       email: email,
-      role: profile['type'] as String,
+      password: password,
+      data: {'full_name': fullName, 'type': 'paciente'},
     );
+
+    final userId = response.user!.id;
+    String? avatarUrl;
+
+    if (avatarBytes != null && avatarExt != null) {
+      try {
+        final fileName = '$userId-${DateTime.now().millisecondsSinceEpoch}.$avatarExt';
+
+        await Supabase.instance.client.storage
+            .from('avatars')
+            .uploadBinary(fileName, avatarBytes);
+
+        avatarUrl = Supabase.instance.client.storage
+            .from('avatars')
+            .getPublicUrl(fileName);
+
+        await Supabase.instance.client.auth.updateUser(
+          UserAttributes(data: {'avatar_url': avatarUrl}),
+        );
+
+        await Supabase.instance.client
+            .from('profile')
+            .update({'avatar_url': avatarUrl})
+            .eq('id', userId);
+      } catch (e) {
+        // Log the error or handle it securely without breaking the registration flow
+      }
+    }
+
+    return AppUser(id: userId, email: email, role: 'paciente');
   }
 }

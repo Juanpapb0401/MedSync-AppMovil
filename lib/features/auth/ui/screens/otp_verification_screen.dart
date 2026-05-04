@@ -91,7 +91,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           ),
                           children: [
                             const TextSpan(
-                              text: 'Ingresa el código de 8 dígitos enviado a\n',
+                              text:
+                                  'Ingresa el código de 8 dígitos enviado a\n',
                             ),
                             TextSpan(
                               text: email,
@@ -132,7 +133,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('El código debe tener 8 dígitos'),
+                                      content: Text(
+                                        'El código debe tener 8 dígitos',
+                                      ),
                                       backgroundColor: AppColors.dangerText,
                                     ),
                                   );

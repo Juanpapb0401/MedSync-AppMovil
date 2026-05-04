@@ -80,10 +80,8 @@ class _PatientNav extends StatelessWidget {
                 icon: Icons.person,
                 label: 'Perfil',
                 isActive: false,
-                onTap: () => Navigator.pushReplacementNamed(
-                  context,
-                  '/profile/patient',
-                ),
+                onTap: () =>
+                    Navigator.pushReplacementNamed(context, '/profile/patient'),
               ),
             ],
           ),

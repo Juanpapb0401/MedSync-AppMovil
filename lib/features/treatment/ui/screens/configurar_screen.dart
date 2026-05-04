@@ -26,7 +26,11 @@ class ConfigurarScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.tune, size: 64, color: AppColors.primary.withValues(alpha: 0.3)),
+            Icon(
+              Icons.tune,
+              size: 64,
+              color: AppColors.primary.withValues(alpha: 0.3),
+            ),
             const SizedBox(height: 16),
             Text(
               'Configurar Tratamiento',
