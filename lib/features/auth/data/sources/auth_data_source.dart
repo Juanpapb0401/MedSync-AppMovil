@@ -61,6 +61,14 @@ class AuthDataSource {
       }
     }
 
+    await _createProfile(
+      id: userId,
+      fullName: fullName,
+      email: email,
+      password: password,
+      type: 'paciente',
+    );
+
     return AppUser(id: userId, email: email, role: 'paciente');
   }
 
@@ -125,6 +133,15 @@ class AuthDataSource {
       }
     }
 
+    await _createProfile(
+      id: userId,
+      fullName: fullName,
+      email: email,
+      password: password,
+      type: 'cuidador',
+      caregiver: null,
+    );
+
     if (cleanedCode != null && cleanedCode.isNotEmpty) {
       final updated = await Supabase.instance.client
           .from('profile')
@@ -139,5 +156,34 @@ class AuthDataSource {
     }
 
     return AppUser(id: userId, email: email, role: 'cuidador');
+  }
+
+  Future<void> _createProfile({
+    required String id,
+    required String fullName,
+    required String email,
+    required String password,
+    required String type,
+    String? caregiver,
+  }) async {
+    await Supabase.instance.client.from('profile').upsert({
+      'id': id,
+      'full_name': fullName,
+      'email': email,
+      'password': password,
+      'type': type,
+      'linking_code': type == 'paciente' ? _resolveLinkingCode(id) : null,
+      'caregiver': caregiver,
+    }, onConflict: 'id');
+  }
+
+  String _resolveLinkingCode(String profileId) {
+    final digits = profileId.replaceAll(RegExp(r'\D'), '');
+    final codeDigits = digits.isEmpty
+        ? '000'
+        : digits.length >= 3
+        ? digits.substring(0, 3)
+        : digits.padLeft(3, '0');
+    return 'MED-$codeDigits';
   }
 }

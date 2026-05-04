@@ -35,7 +35,12 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 36),
+              const SizedBox(height: 8),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: MedSyncBackButton(),
+              ),
+              const SizedBox(height: 28),
               Center(
                 child: Container(
                   width: 64,

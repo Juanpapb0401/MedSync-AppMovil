@@ -36,37 +36,51 @@ class _CodeBindingScreenState extends State<CodeBindingScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
-          child: BlocBuilder<CodeBindingBloc, CodeBindingState>(
-            builder: (context, state) {
-              if (state is CodeBindingLoadingState ||
-                  state is CodeBindingInitialState) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              }
+          child: Stack(
+            children: [
+              const Positioned(
+                top: 4,
+                left: 24,
+                child: MedSyncBackButton(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: BlocBuilder<CodeBindingBloc, CodeBindingState>(
+                  builder: (context, state) {
+                    if (state is CodeBindingLoadingState ||
+                        state is CodeBindingInitialState) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      );
+                    }
 
-              if (state is CodeBindingErrorState) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      state.message,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                );
-              }
+                    if (state is CodeBindingErrorState) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            state.message,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
 
-              if (state is CodeBindingLoadedState) {
-                return _CodeBindingContent(code: state.code);
-              }
+                    if (state is CodeBindingLoadedState) {
+                      return _CodeBindingContent(code: state.code);
+                    }
 
-              return const SizedBox.shrink();
-            },
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -179,12 +193,12 @@ class _CodeBindingContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
-                  width: 152,
-                  height: 38,
+                  width: 170,
+                  height: 40,
                   child: OutlinedButton.icon(
                     onPressed: () => _copyCode(context),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       side: const BorderSide(
                         color: AppColors.primary,
                         width: 1,
@@ -195,14 +209,17 @@ class _CodeBindingContent extends StatelessWidget {
                       backgroundColor: AppColors.background,
                       foregroundColor: AppColors.primary,
                     ),
-                    icon: const Icon(Icons.copy_rounded, size: 16),
+                    icon: const Icon(Icons.copy_rounded, size: 15),
                     label: Text(
                       'Copiar código',
                       style: GoogleFonts.poppins(
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: AppColors.primary,
                       ),
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.clip,
                     ),
                   ),
                 ),

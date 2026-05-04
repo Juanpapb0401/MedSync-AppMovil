@@ -299,13 +299,16 @@ class _LinkingCodeCard extends StatelessWidget {
                         color: const Color(0xFF99A1AF),
                       ),
                     ),
-                    Text(
-                      code,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
-                        letterSpacing: 0.5,
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, '/code'),
+                      child: Text(
+                        code,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ],
