@@ -62,13 +62,6 @@ class MedSyncApp extends StatelessWidget {
               : null;
           return CodeBindingScreen(code: code);
         },
-        '/codigo': (context) {
-          final arguments = ModalRoute.of(context)?.settings.arguments;
-          final code = arguments is String && arguments.trim().isNotEmpty
-              ? arguments.trim()
-              : null;
-          return CodeBindingScreen(code: code);
-        },
         '/rutina': (_) => const RutinaScreen(),
         '/configurar': (_) => const ConfigurarScreen(),
         '/profile/caregiver': (_) => const CaregiverProfileScreen(),
