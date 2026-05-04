@@ -12,4 +12,10 @@ class ForgotPasswordRepo {
       email: email,
     );
   }
+
+  Future<void> updatePassword(String newPassword) async {
+    await Supabase.instance.client.auth.updateUser(
+      UserAttributes(password: newPassword),
+    );
+  }
 }
