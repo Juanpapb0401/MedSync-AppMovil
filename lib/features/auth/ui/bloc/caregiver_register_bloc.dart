@@ -69,6 +69,7 @@ class CaregiverRegisterBloc
     }
     if (msg.contains('email already') ||
         msg.contains('already registered') ||
+        msg.contains('correo ya está registrado') ||
         msg.contains('user already exists') ||
         msg.contains('already in use')) {
       return 'Este correo ya está registrado. Usa otro correo o inicia sesión.';

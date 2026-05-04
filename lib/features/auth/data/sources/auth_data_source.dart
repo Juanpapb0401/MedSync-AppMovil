@@ -27,6 +27,8 @@ class AuthDataSource {
     Uint8List? avatarBytes,
     String? avatarExt,
   }) async {
+    await _ensureEmailAvailable(email);
+
     final response = await Supabase.instance.client.auth.signUp(
       email: email,
       password: password,
@@ -80,6 +82,8 @@ class AuthDataSource {
     String? avatarExt,
     String? patientCode,
   }) async {
+    await _ensureEmailAvailable(email);
+
     final cleanedCode = patientCode?.trim().toUpperCase();
 
     if (cleanedCode != null && cleanedCode.isNotEmpty) {
@@ -180,10 +184,22 @@ class AuthDataSource {
   String _resolveLinkingCode(String profileId) {
     final digits = profileId.replaceAll(RegExp(r'\D'), '');
     final codeDigits = digits.isEmpty
-        ? '000'
-        : digits.length >= 3
-        ? digits.substring(0, 3)
-        : digits.padLeft(3, '0');
+        ? '0000'
+        : digits.length >= 4
+        ? digits.substring(0, 4)
+        : digits.padLeft(4, '0');
     return 'MED-$codeDigits';
+  }
+
+  Future<void> _ensureEmailAvailable(String email) async {
+    final existingProfile = await Supabase.instance.client
+        .from('profile')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+
+    if (existingProfile != null) {
+      throw Exception('Este correo ya está registrado. Usa otro correo o inicia sesión.');
+    }
   }
 }

@@ -98,10 +98,10 @@ class ProfileDataSource {
 
     final digits = profileId.replaceAll(RegExp(r'\D'), '');
     final codeDigits = digits.isEmpty
-        ? '000'
-        : digits.length >= 3
-        ? digits.substring(0, 3)
-        : digits.padLeft(3, '0');
+        ? '0000'
+        : digits.length >= 4
+        ? digits.substring(0, 4)
+        : digits.padLeft(4, '0');
     return 'MED-$codeDigits';
   }
 }

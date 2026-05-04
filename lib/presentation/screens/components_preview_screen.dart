@@ -148,7 +148,7 @@ class _ComponentsPreviewScreenState extends State<ComponentsPreviewScreen> {
             const SizedBox(height: 12),
             const InfoCard(
               label: 'Código de paciente',
-              description: 'Pídele el código a tu paciente en formato MED-XXX.',
+              description: 'Pídele el código a tu paciente en formato MED-XXXX.',
               icon: Icons.link,
             ),
             const SizedBox(height: 32),
