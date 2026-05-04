@@ -14,7 +14,9 @@ class LoginScreen extends StatelessWidget {
       child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginSuccessState) {
-            final route = state.role == 'paciente' ? '/rutina' : '/configurar';
+            final route = state.role == 'paciente'
+                ? '/profile/patient'
+                : '/profile/caregiver';
             Navigator.pushReplacementNamed(context, route);
           }
         },
