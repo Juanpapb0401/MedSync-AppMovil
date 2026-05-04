@@ -4,6 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/ui/screens/login_screen.dart';
+import 'features/profile/ui/screens/caregiver_profile_screen.dart';
+import 'features/profile/ui/screens/patient_profile_screen.dart';
+import 'features/treatment/ui/screens/configurar_screen.dart';
+import 'features/rutina/ui/screens/rutina_screen.dart';
 
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
 import 'features/auth/ui/screens/forgot_password_screen.dart';
@@ -49,10 +53,10 @@ class MedSyncApp extends StatelessWidget {
             const Scaffold(body: Center(child: Text('Crear nueva contraseña (HU Compañero)'))),
         '/auth/role-selection': (_) =>
             const Scaffold(body: Center(child: Text('Selección de rol'))),
-        '/rutina': (_) =>
-            const Scaffold(body: Center(child: Text('Mi Rutina'))),
-        '/configurar': (_) =>
-            const Scaffold(body: Center(child: Text('Configurar Tratamiento'))),
+        '/rutina': (_) => const RutinaScreen(),
+        '/configurar': (_) => const ConfigurarScreen(),
+        '/profile/caregiver': (_) => const CaregiverProfileScreen(),
+        '/profile/patient': (_) => const PatientProfileScreen(),
         '/dev': (_) => const ComponentsPreviewScreen(),
       },
     );
