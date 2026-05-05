@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../components/components.dart';
@@ -63,10 +62,7 @@ class _ComponentsPreviewScreenState extends State<ComponentsPreviewScreen> {
               isLoading: _buttonLoading,
             ),
             const SizedBox(height: 12),
-            MedSyncOutlinedButton(
-              label: 'Compartir código',
-              onPressed: () {},
-            ),
+            MedSyncOutlinedButton(label: 'Compartir código', onPressed: () {}),
             const SizedBox(height: 12),
             Center(
               child: MedSyncLinkButton(
@@ -75,10 +71,7 @@ class _ComponentsPreviewScreenState extends State<ComponentsPreviewScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            MedSyncButton(
-              label: 'Botón deshabilitado',
-              onPressed: null,
-            ),
+            MedSyncButton(label: 'Botón deshabilitado', onPressed: null),
             const SizedBox(height: 32),
 
             // ── TextFields ───────────────────────────────────────────────
@@ -155,7 +148,7 @@ class _ComponentsPreviewScreenState extends State<ComponentsPreviewScreen> {
             const SizedBox(height: 12),
             const InfoCard(
               label: 'Código de paciente',
-              description: 'Pídele el código a tu paciente en formato MED-XXX.',
+              description: 'Pídele el código a tu paciente en formato MED-XXXX.',
               icon: Icons.link,
             ),
             const SizedBox(height: 32),
@@ -163,21 +156,14 @@ class _ComponentsPreviewScreenState extends State<ComponentsPreviewScreen> {
             // ── AvatarPicker ─────────────────────────────────────────────
             _SectionTitle(label: 'AM-34 — AvatarPicker'),
             const SizedBox(height: 12),
-            Center(
-              child: AvatarPicker(
-                onImageSelected: (File image) {},
-              ),
-            ),
+            Center(child: AvatarPicker(onImageSelected: (bytes, ext) {})),
             const SizedBox(height: 32),
 
             // ── Progress Dots ─────────────────────────────────────────────
             _SectionTitle(label: 'AM-35 — OnboardingProgressDots'),
             const SizedBox(height: 16),
             Center(
-              child: OnboardingProgressDots(
-                count: 3,
-                currentIndex: _dotIndex,
-              ),
+              child: OnboardingProgressDots(count: 3, currentIndex: _dotIndex),
             ),
             const SizedBox(height: 16),
             Row(

@@ -8,12 +8,14 @@ class MedSyncButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final bool isLoading;
+  final IconData? leadingIcon;
 
   const MedSyncButton({
     super.key,
     required this.label,
     required this.onPressed,
     this.isLoading = false,
+    this.leadingIcon,
   });
 
   @override
@@ -40,13 +42,23 @@ class MedSyncButton extends StatelessWidget {
                   strokeWidth: 2.5,
                 ),
               )
-            : Text(
-                label,
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (leadingIcon != null) ...[
+                    Icon(leadingIcon, color: Colors.white, size: 18),
+                    const SizedBox(width: 10),
+                  ],
+                  Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
       ),
     );
