@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import '../../../../core/domain/model/app_user.dart';
+import '../../../profile/domain/model/profile_model.dart';
 import '../../domain/repo/auth_repo.dart';
 import '../sources/auth_data_source.dart';
 
@@ -7,12 +7,12 @@ class AuthRepoImpl extends AuthRepo {
   final AuthDataSource _source = AuthDataSource();
 
   @override
-  Future<AppUser> login(String email, String password) {
+  Future<ProfileModel> login(String email, String password) {
     return _source.login(email, password);
   }
 
   @override
-  Future<AppUser> registerPatient(
+  Future<ProfileModel> registerPatient(
     String fullName,
     String email,
     String password, {
@@ -29,7 +29,7 @@ class AuthRepoImpl extends AuthRepo {
   }
 
   @override
-  Future<AppUser> registerCaregiver(
+  Future<ProfileModel> registerCaregiver(
     String fullName,
     String email,
     String password, {

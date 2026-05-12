@@ -25,81 +25,71 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: MediaQuery.sizeOf(context).height -
-              MediaQuery.paddingOf(context).vertical - 48,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 8),
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: MedSyncBackButton(),
         ),
-        child: IntrinsicHeight(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 8),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: MedSyncBackButton(),
-              ),
-              const SizedBox(height: 28),
-              Center(
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.local_pharmacy_outlined,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                'MedSync',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Selecciona tu rol para continuar',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 28),
-              RoleCard(
-                label: 'Paciente',
-                description: 'Gestiona tus medicamentos y rutina',
-                icon: Icons.person_outline,
-                isSelected: _selectedRole == 'paciente',
-                onTap: () => setState(() => _selectedRole = 'paciente'),
-              ),
-              const SizedBox(height: 12),
-              RoleCard(
-                label: 'Cuidador',
-                description: 'Configura tratamientos y monitorea',
-                icon: Icons.health_and_safety_outlined,
-                isSelected: _selectedRole == 'cuidador',
-                onTap: () => setState(() => _selectedRole = 'cuidador'),
-              ),
-              const Spacer(),
-              MedSyncButton(
-                label: 'Continuar',
-                onPressed: _selectedRole == null ? null : _continue,
-              ),
-            ],
+        const SizedBox(height: 28),
+        Center(
+          child: Container(
+            width: 64,
+            height: 64,
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.local_pharmacy_outlined,
+              color: Colors.white,
+              size: 30,
+            ),
           ),
         ),
-      ),
+        const SizedBox(height: 18),
+        Text(
+          'MedSync',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.poppins(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Selecciona tu rol para continuar',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 28),
+        RoleCard(
+          label: 'Paciente',
+          description: 'Gestiona tus medicamentos y rutina',
+          icon: Icons.person_outline,
+          isSelected: _selectedRole == 'paciente',
+          onTap: () => setState(() => _selectedRole = 'paciente'),
+        ),
+        const SizedBox(height: 12),
+        RoleCard(
+          label: 'Cuidador',
+          description: 'Configura tratamientos y monitorea',
+          icon: Icons.health_and_safety_outlined,
+          isSelected: _selectedRole == 'cuidador',
+          onTap: () => setState(() => _selectedRole = 'cuidador'),
+        ),
+        const Spacer(),
+        MedSyncButton(
+          label: 'Continuar',
+          onPressed: _selectedRole == null ? null : _continue,
+        ),
+      ],
     );
   }
 }
