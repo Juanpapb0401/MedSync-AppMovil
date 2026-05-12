@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/domain/model/app_user.dart';
+import '../../../profile/domain/model/profile_model.dart';
 
 class AuthDataSource {
-  Future<AppUser> login(String email, String password) async {
+  Future<ProfileModel> login(String email, String password) async {
     final response = await Supabase.instance.client.auth.signInWithPassword(
       email: email,
       password: password,
@@ -17,10 +17,16 @@ class AuthDataSource {
         .eq('email', email)
         .single();
 
-    return AppUser(id: userId, email: email, role: profile['type'] as String);
+    return ProfileModel(
+      id: userId,
+      fullName: '',
+      email: email,
+      type: profile['type'] as String,
+      linkingCode: '',
+    );
   }
 
-  Future<AppUser> registerPatient(
+  Future<ProfileModel> registerPatient(
     String fullName,
     String email,
     String password, {
@@ -71,10 +77,16 @@ class AuthDataSource {
       type: 'paciente',
     );
 
-    return AppUser(id: userId, email: email, role: 'paciente');
+    return ProfileModel(
+      id: userId,
+      fullName: fullName,
+      email: email,
+      type: 'paciente',
+      linkingCode: '',
+    );
   }
 
-  Future<AppUser> registerCaregiver(
+  Future<ProfileModel> registerCaregiver(
     String fullName,
     String email,
     String password, {
@@ -168,7 +180,13 @@ class AuthDataSource {
           });
     }
 
-    return AppUser(id: userId, email: email, role: 'cuidador');
+    return ProfileModel(
+      id: userId,
+      fullName: fullName,
+      email: email,
+      type: 'cuidador',
+      linkingCode: '',
+    );
   }
 
   Future<void> _createProfile({

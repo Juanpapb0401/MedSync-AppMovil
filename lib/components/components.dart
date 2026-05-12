@@ -1,4 +1,5 @@
 export 'app_colors.dart';
+export 'main_nav_bar.dart';
 export 'medsync_button.dart';
 export 'medsync_text_field.dart';
 export 'medsync_back_button.dart';
