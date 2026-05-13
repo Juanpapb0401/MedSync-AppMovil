@@ -35,6 +35,7 @@ class ForgotPasswordBloc
         await _repo.sendResetEmail(event.email);
         emit(ForgotPasswordSuccess());
       } catch (e) {
+        print('DEBUG: Error enviando correo de recuperación: $e');
         emit(
           ForgotPasswordError('No se pudo enviar el correo. Intenta de nuevo.'),
         );
