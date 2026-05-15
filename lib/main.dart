@@ -10,7 +10,7 @@ import 'features/profile/ui/screens/caregiver_profile_screen.dart';
 import 'features/profile/ui/screens/patient_profile_screen.dart';
 import 'features/treatment/ui/screens/treatment_home_screen.dart';
 import 'features/treatment/ui/screens/treatments_list_placeholder_screen.dart';
-import 'features/treatment/ui/screens/create_treatment_placeholder_screen.dart';
+import 'features/treatment/ui/screens/create_treatment_screen.dart';
 import 'features/rutina/ui/screens/rutina_screen.dart';
 
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
@@ -68,7 +68,7 @@ class MedSyncApp extends StatelessWidget {
         '/configurar': (_) => const TreatmentHomeScreen(),
         '/tratamientos/home': (_) => const TreatmentHomeScreen(),
         '/tratamientos/lista': (_) => const TreatmentsListPlaceholderScreen(),
-        '/tratamientos/crear': (_) => const CreateTreatmentPlaceholderScreen(),
+        '/tratamientos/crear': (_) => const CreateTreatmentScreen(),
         '/profile/caregiver': (_) => const CaregiverProfileScreen(),
         '/profile/patient': (_) => const PatientProfileScreen(),
         '/dev': (_) => const ComponentsPreviewScreen(),
