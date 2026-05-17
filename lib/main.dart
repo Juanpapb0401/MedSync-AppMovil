@@ -21,6 +21,8 @@ import 'features/auth/ui/screens/create_new_password_screen.dart';
 import 'features/auth/ui/screens/password_updated_screen.dart';
 import 'features/auth/ui/screens/patient_register_screen.dart';
 import 'features/auth/ui/screens/role_selection_screen.dart';
+import 'features/treatment/domain/model/treatment_model.dart';
+import 'features/treatment/ui/screens/edit_treatment_screen.dart';
 import 'presentation/screens/components_preview_screen.dart';
 
 void main() async {
@@ -69,6 +71,21 @@ class MedSyncApp extends StatelessWidget {
         '/tratamientos/home': (_) => const TreatmentHomeScreen(),
         '/tratamientos/lista': (_) => const TreatmentsListPlaceholderScreen(),
         '/tratamientos/crear': (_) => const CreateTreatmentScreen(),
+        '/tratamientos/editar': (context) {
+          // Dummy data base placeholder
+          const dummyTreatment = TreatmentModel(
+            medicineName: 'Metformina',
+            dose: '850',
+            unit: 'mg',
+            frequency: 'Cada 8 horas',
+            startTime: '08:00 AM',
+            restrictions: ['Evitar lácteos', 'No alcohol'],
+          );
+          return const EditTreatmentScreen(
+            initialTreatment: dummyTreatment,
+            patientName: 'María',
+          );
+        },
         '/profile/caregiver': (_) => const CaregiverProfileScreen(),
         '/profile/patient': (_) => const PatientProfileScreen(),
         '/dev': (_) => const ComponentsPreviewScreen(),
