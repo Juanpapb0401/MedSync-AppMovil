@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/domain/model/app_user.dart';
+import '../../../profile/domain/model/profile_model.dart';
 
 class AuthDataSource {
-  Future<AppUser> login(String email, String password) async {
+  Future<ProfileModel> login(String email, String password) async {
     final response = await Supabase.instance.client.auth.signInWithPassword(
       email: email,
       password: password,
@@ -17,10 +17,16 @@ class AuthDataSource {
         .eq('email', email)
         .single();
 
-    return AppUser(id: userId, email: email, role: profile['type'] as String);
+    return ProfileModel(
+      id: userId,
+      fullName: '',
+      email: email,
+      type: profile['type'] as String,
+      linkingCode: '',
+    );
   }
 
-  Future<AppUser> registerPatient(
+  Future<ProfileModel> registerPatient(
     String fullName,
     String email,
     String password, {
@@ -71,10 +77,16 @@ class AuthDataSource {
       type: 'paciente',
     );
 
-    return AppUser(id: userId, email: email, role: 'paciente');
+    return ProfileModel(
+      id: userId,
+      fullName: fullName,
+      email: email,
+      type: 'paciente',
+      linkingCode: '',
+    );
   }
 
-  Future<AppUser> registerCaregiver(
+  Future<ProfileModel> registerCaregiver(
     String fullName,
     String email,
     String password, {
@@ -89,7 +101,7 @@ class AuthDataSource {
     if (cleanedCode != null && cleanedCode.isNotEmpty) {
       final patient = await Supabase.instance.client
           .from('profile')
-          .select('id, caregiver')
+          .select('id')
           .eq('type', 'paciente')
           .eq('linking_code', cleanedCode)
           .maybeSingle();
@@ -98,7 +110,13 @@ class AuthDataSource {
         throw Exception('El código del paciente no existe');
       }
 
-      if (patient['caregiver'] != null) {
+      final existingRelation = await Supabase.instance.client
+          .from('user_relation')
+          .select('profile_id')
+          .eq('profile_id', patient['id'])
+          .maybeSingle();
+
+      if (existingRelation != null) {
         throw Exception('Este código ya fue vinculado a otro cuidador');
       }
     }
@@ -147,19 +165,28 @@ class AuthDataSource {
     );
 
     if (cleanedCode != null && cleanedCode.isNotEmpty) {
-      final updated = await Supabase.instance.client
+      final patient = await Supabase.instance.client
           .from('profile')
-          .update({'caregiver': userId})
-          .eq('linking_code', cleanedCode)
+          .select('id')
           .eq('type', 'paciente')
-          .select('id');
+          .eq('linking_code', cleanedCode)
+          .single();
 
-      if (updated is List && updated.isEmpty) {
-        throw Exception('No se pudo vincular al paciente');
-      }
+      await Supabase.instance.client
+          .from('user_relation')
+          .insert({
+            'profile_id': patient['id'],
+            'profile_id1': userId,
+          });
     }
 
-    return AppUser(id: userId, email: email, role: 'cuidador');
+    return ProfileModel(
+      id: userId,
+      fullName: fullName,
+      email: email,
+      type: 'cuidador',
+      linkingCode: '',
+    );
   }
 
   Future<void> _createProfile({
@@ -177,7 +204,6 @@ class AuthDataSource {
       'password': password,
       'type': type,
       'linking_code': type == 'paciente' ? _resolveLinkingCode(id) : null,
-      'caregiver': caregiver,
     }, onConflict: 'id');
   }
 

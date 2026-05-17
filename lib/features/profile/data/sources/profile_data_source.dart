@@ -41,39 +41,41 @@ class ProfileDataSource {
     String? linkedCaregiverName;
 
     if (type == 'cuidador') {
-      // Find patients whose caregiver FK points to the current user.
-      // Try the auth UUID first; fall back to profile.id if different.
-      var patients = await _client
-          .from('profile')
-          .select('id, full_name, linking_code')
-          .eq('caregiver', lookupId);
+      final relations = await _client
+          .from('user_relation')
+          .select('profile_id')
+          .eq('profile_id1', profileId);
 
-      if ((patients as List).isEmpty && lookupId != profileId) {
-        patients = await _client
+      if ((relations as List).isNotEmpty) {
+        final patientId = relations.first['profile_id'] as String;
+        final patientData = await _client
             .from('profile')
             .select('id, full_name, linking_code')
-            .eq('caregiver', profileId);
-      }
+            .eq('id', patientId)
+            .single();
 
-      if ((patients as List).isNotEmpty) {
-        final p = patients.first;
         linkedPatient = LinkedPatientModel(
-          id: p['id'] as String,
-          fullName: p['full_name'] as String,
+          id: patientData['id'] as String,
+          fullName: patientData['full_name'] as String,
           linkingCode: _resolveLinkingCode(
-            p['id'] as String,
-            p['linking_code'] as String?,
+            patientData['id'] as String,
+            patientData['linking_code'] as String?,
           ),
         );
       }
     } else {
-      // Patient: the caregiver field holds the caregiver's profile UUID.
-      final caregiverUuid = data['caregiver'] as String?;
-      if (caregiverUuid != null) {
+      final relation = await _client
+          .from('user_relation')
+          .select('profile_id1')
+          .eq('profile_id', profileId)
+          .maybeSingle();
+
+      if (relation != null) {
+        final caregiverId = relation['profile_id1'] as String;
         final caregiver = await _client
             .from('profile')
             .select('full_name')
-            .eq('id', caregiverUuid)
+            .eq('id', caregiverId)
             .single();
         linkedCaregiverName = caregiver['full_name'] as String;
       }

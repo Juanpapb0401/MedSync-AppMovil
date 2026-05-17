@@ -48,7 +48,7 @@ app.*.map.json
 .env
 
 # Claude AI related
-.claude/
+
 claude.md
 CLAUDE.md
 *claude*

@@ -36,7 +36,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoadingState());
       try {
         final user = await _usecase.execute(event.email, event.password);
-        emit(LoginSuccessState(user.role));
+        emit(LoginSuccessState(user.type));
       } catch (e) {
         emit(LoginFailState(_friendlyError(e)));
       }

@@ -109,7 +109,7 @@ class _PatientRegisterPageState extends State<PatientRegisterPage> {
             ),
           );
         } else if (state is PatientRegisterSuccessState) {
-          Navigator.pushReplacementNamed(context, '/profile/patient');
+          Navigator.pushReplacementNamed(context, '/auth/binding-code');
         }
       },
       builder: (context, state) {
