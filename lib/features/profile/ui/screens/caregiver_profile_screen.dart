@@ -3,20 +3,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../components/app_colors.dart';
 import '../../../../components/main_nav_bar.dart';
+import '../bloc/link_patient_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/estado_card.dart';
 import '../widgets/linked_patient_card.dart';
 import '../widgets/ayuda_card_caregiver.dart';
 import '../widgets/logout_button.dart';
+import '../widgets/link_patient_dialog.dart';
 
 class CaregiverProfileScreen extends StatelessWidget {
   const CaregiverProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ProfileBloc()..add(LoadProfileEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => ProfileBloc()..add(LoadProfileEvent()),
+        ),
+        BlocProvider(
+          create: (_) => LinkPatientBloc(),
+        ),
+      ],
       child: const _CaregiverProfileView(),
     );
   }
@@ -69,6 +78,26 @@ class _CaregiverProfileView extends StatelessWidget {
                           linkedLabel: 'Paciente vinculado',
                           linkedStatus: 'Vinculado',
                           statusType: 'patient',
+                          onLinkTap: state.profile.hasLinkedPatient
+                              ? null
+                              : () async {
+                                  final linked = await showDialog<bool>(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (dialogContext) {
+                                      return BlocProvider.value(
+                                        value: context.read<LinkPatientBloc>(),
+                                        child: const LinkPatientDialog(),
+                                      );
+                                    },
+                                  );
+
+                                  if (linked == true && context.mounted) {
+                                    context.read<ProfileBloc>().add(
+                                          LoadProfileEvent(),
+                                        );
+                                  }
+                                },
                         ),
                         const SizedBox(height: 16),
                         if (state.profile.linkedPatient != null) ...[
