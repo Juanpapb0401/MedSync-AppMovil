@@ -19,8 +19,15 @@ class TreatmentsListScreen extends StatelessWidget {
   }
 }
 
-class _TreatmentsListView extends StatelessWidget {
+class _TreatmentsListView extends StatefulWidget {
   const _TreatmentsListView();
+
+  @override
+  State<_TreatmentsListView> createState() => _TreatmentsListViewState();
+}
+
+class _TreatmentsListViewState extends State<_TreatmentsListView> {
+  String? _pendingToastMessage;
 
   Future<void> _openEditScreen(
     BuildContext context,
@@ -49,6 +56,9 @@ class _TreatmentsListView extends StatelessWidget {
     String medicineName,
     String patientName,
   ) {
+    _pendingToastMessage =
+        'Medicamento eliminado — $medicineName fue removido del plan de $patientName';
+
     context.read<TreatmentsListBloc>().add(
       DeleteTreatmentEvent(
         treatmentId: treatmentId,
@@ -56,23 +66,22 @@ class _TreatmentsListView extends StatelessWidget {
         patientName: patientName,
       ),
     );
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Medicamento eliminado — $medicineName fue removido del plan de $patientName',
-        ),
-        backgroundColor: AppColors.primary,
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 8,
-          left: 16,
-          right: 16,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 3),
+  void _showToast(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (_) => Stack(
+        children: [
+          _NotificationBanner(message: message, onDismiss: () => entry.remove()),
+        ],
       ),
     );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 3), () {
+      if (entry.mounted) entry.remove();
+    });
   }
 
   @override
@@ -80,7 +89,13 @@ class _TreatmentsListView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       body: SafeArea(
-        child: BlocBuilder<TreatmentsListBloc, TreatmentsListState>(
+        child: BlocConsumer<TreatmentsListBloc, TreatmentsListState>(
+          listener: (context, state) {
+            if (state is TreatmentsListLoadedState && _pendingToastMessage != null) {
+              _showToast(context, _pendingToastMessage!);
+              _pendingToastMessage = null;
+            }
+          },
           builder: (context, state) {
             if (state is TreatmentsListLoadingState ||
                 state is TreatmentsListInitialState) {
@@ -225,6 +240,100 @@ class _TreatmentsListView extends StatelessWidget {
       bottomNavigationBar: const MainNavBar(
         userRole: 'cuidador',
         activeIndex: 0,
+      ),
+    );
+  }
+}
+
+class _NotificationBanner extends StatefulWidget {
+  final String message;
+  final VoidCallback onDismiss;
+
+  const _NotificationBanner({required this.message, required this.onDismiss});
+
+  @override
+  State<_NotificationBanner> createState() => _NotificationBannerState();
+}
+
+class _NotificationBannerState extends State<_NotificationBanner>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+
+    return Positioned(
+      top: topPadding + 8,
+      left: 20,
+      right: 20,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Material(
+            elevation: 6,
+            shadowColor: Colors.black26,
+            borderRadius: BorderRadius.circular(100),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white, size: 18),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      widget.message,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      _controller.reverse().then((_) => widget.onDismiss());
+                    },
+                    child: const Icon(Icons.close, color: Colors.white, size: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
