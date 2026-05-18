@@ -32,11 +32,6 @@ class ProfileDataSource {
       }
     }
 
-    // In Supabase, auth.users.id and profile.id are the same UUID when the
-    // profile was created via the auth trigger. We try both so the query works
-    // regardless of how the test data was inserted.
-    final lookupId = authUser.id;
-
     LinkedPatientModel? linkedPatient;
     String? linkedCaregiverName;
 
@@ -90,6 +85,73 @@ class ProfileDataSource {
       linkedPatient: linkedPatient,
       linkedCaregiverName: linkedCaregiverName,
     );
+  }
+
+  Future<void> linkPatientToCaregiver(String patientCode) async {
+    final authUser = _client.auth.currentSession?.user;
+    if (authUser == null) throw Exception('No active session');
+
+    final cleanedCode = patientCode.trim().toUpperCase();
+    if (cleanedCode.isEmpty) {
+      throw Exception('Ingresa el código del paciente');
+    }
+
+    final caregiverProfile = await _client
+        .from('profile')
+        .select('id, type')
+        .eq('id', authUser.id)
+        .maybeSingle();
+
+    final resolvedCaregiverProfile = caregiverProfile ??
+        await _client
+            .from('profile')
+            .select('id, type')
+            .eq('email', authUser.email!)
+            .maybeSingle();
+
+    if (resolvedCaregiverProfile == null) {
+      throw Exception('No se pudo cargar el perfil del cuidador');
+    }
+
+    if (resolvedCaregiverProfile['type'] != 'cuidador') {
+      throw Exception('Solo los cuidadores pueden vincular pacientes');
+    }
+
+    final patient = await _client
+        .from('profile')
+        .select('id')
+        .eq('type', 'paciente')
+        .eq('linking_code', cleanedCode)
+        .maybeSingle();
+
+    if (patient == null) {
+      throw Exception('El código del paciente no existe');
+    }
+
+    final existingRelationByPatient = await _client
+        .from('user_relation')
+        .select('profile_id')
+        .eq('profile_id', patient['id'])
+        .maybeSingle();
+
+    if (existingRelationByPatient != null) {
+      throw Exception('Este código ya fue vinculado a otro cuidador');
+    }
+
+    final existingRelationByCaregiver = await _client
+        .from('user_relation')
+        .select('profile_id1')
+        .eq('profile_id1', resolvedCaregiverProfile['id'])
+        .maybeSingle();
+
+    if (existingRelationByCaregiver != null) {
+      throw Exception('Ya tienes un paciente vinculado');
+    }
+
+    await _client.from('user_relation').insert({
+      'profile_id': patient['id'],
+      'profile_id1': resolvedCaregiverProfile['id'],
+    });
   }
 
   String _resolveLinkingCode(String profileId, String? storedLinkingCode) {
