@@ -43,6 +43,38 @@ class _TreatmentsListView extends StatelessWidget {
     }
   }
 
+  void _deleteTreatment(
+    BuildContext context,
+    String treatmentId,
+    String medicineName,
+    String patientName,
+  ) {
+    context.read<TreatmentsListBloc>().add(
+      DeleteTreatmentEvent(
+        treatmentId: treatmentId,
+        medicineName: medicineName,
+        patientName: patientName,
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Medicamento eliminado — $medicineName fue removido del plan de $patientName',
+        ),
+        backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + 8,
+          left: 16,
+          right: 16,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,6 +182,14 @@ class _TreatmentsListView extends StatelessWidget {
                                           context,
                                           item.id,
                                           item.treatment,
+                                          state.result.patientName,
+                                        );
+                                      },
+                                      onDelete: () {
+                                        _deleteTreatment(
+                                          context,
+                                          item.id,
+                                          item.treatment.medicineName,
                                           state.result.patientName,
                                         );
                                       },

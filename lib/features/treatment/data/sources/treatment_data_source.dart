@@ -315,6 +315,27 @@ class TreatmentDataSource {
     return '${hour.toString().padLeft(2, '0')}:$minute:00';
   }
 
+  Future<void> deleteTreatment(String treatmentId) async {
+    final authUser = _client.auth.currentSession?.user;
+    if (authUser == null) throw Exception('No active session');
+
+    final schedules = await _client
+        .from('schedule')
+        .select('id')
+        .eq('treatment_id', treatmentId);
+
+    for (final schedule in schedules as List) {
+      await _client
+          .from('notification')
+          .delete()
+          .eq('schedule_id', schedule['id'] as String);
+    }
+
+    await _client.from('schedule').delete().eq('treatment_id', treatmentId);
+    await _client.from('restriction').delete().eq('treatment_id', treatmentId);
+    await _client.from('treatment').delete().eq('id', treatmentId);
+  }
+
   String _formatDose(dynamic dose) {
     if (dose == null) return '';
     if (dose is num) {

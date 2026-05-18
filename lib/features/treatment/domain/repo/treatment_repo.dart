@@ -7,4 +7,5 @@ abstract class TreatmentRepo {
   Future<TreatmentListResultModel> getTreatments();
   Future<void> saveTreatment(TreatmentModel treatment);
   Future<void> updateTreatment(String treatmentId, TreatmentModel treatment);
+  Future<void> deleteTreatment(String treatmentId);
 }
