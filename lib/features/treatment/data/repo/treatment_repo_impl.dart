@@ -21,4 +21,8 @@ class TreatmentRepoImpl implements TreatmentRepo {
   @override
   Future<void> updateTreatment(String treatmentId, TreatmentModel treatment) =>
       _source.updateTreatment(treatmentId, treatment);
+
+  @override
+  Future<void> deleteTreatment(String treatmentId) =>
+      _source.deleteTreatment(treatmentId);
 }
