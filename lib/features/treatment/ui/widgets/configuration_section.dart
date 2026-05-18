@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../components/components.dart';
-import '../../../../components/app_colors.dart';
 
 class ConfigurationSection extends StatelessWidget {
   final TextEditingController medicineController;
@@ -73,7 +72,7 @@ class ConfigurationSection extends StatelessWidget {
         _DropdownField(
           label: 'Frecuencia',
           value: selectedFrequency,
-          items: const ['Cada 8 horas', 'Cada 12 horas', 'Cada 24 horas'],
+          items: const ['Cada 8h', 'Cada 12h', 'Cada 24h'],
           onChanged: onFrequencyChanged,
         ),
         const SizedBox(height: 16),
