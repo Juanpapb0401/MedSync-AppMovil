@@ -12,6 +12,7 @@ import 'features/treatment/ui/screens/treatment_home_screen.dart';
 import 'features/treatment/ui/screens/treatments_list_screen.dart';
 import 'features/treatment/ui/screens/create_treatment_screen.dart';
 import 'features/rutina/ui/screens/rutina_screen.dart';
+import 'features/dashboard/ui/screens/dashboard_screen.dart';
 
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
 import 'features/auth/ui/screens/forgot_password_screen.dart';
@@ -101,6 +102,7 @@ class MedSyncApp extends StatelessWidget {
             patientName: 'María',
           );
         },
+        '/dashboard': (_) => const DashboardScreen(),
         '/profile/caregiver': (_) => const CaregiverProfileScreen(),
         '/profile/patient': (_) => const PatientProfileScreen(),
         '/dev': (_) => const ComponentsPreviewScreen(),
