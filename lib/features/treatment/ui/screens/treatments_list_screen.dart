@@ -176,6 +176,7 @@ class _TreatmentsListView extends StatelessWidget {
                                   itemBuilder: (context, index) {
                                     final item = treatments[index];
                                     return TreatmentListCard(
+                                      key: ValueKey(item.id),
                                       item: item,
                                       onEdit: () {
                                         _openEditScreen(

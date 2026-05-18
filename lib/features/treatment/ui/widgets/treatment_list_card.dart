@@ -22,9 +22,10 @@ class TreatmentListCard extends StatefulWidget {
 
 class _TreatmentListCardState extends State<TreatmentListCard>
     with TickerProviderStateMixin {
+  static const _deleteDuration = Duration(seconds: 4);
+
   bool _isConfirmingDelete = false;
   AnimationController? _deleteTimer;
-  static const _deleteDuration = Duration(seconds: 4);
 
   void _requestDelete() {
     _deleteTimer?.dispose();
@@ -34,7 +35,6 @@ class _TreatmentListCardState extends State<TreatmentListCard>
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           widget.onDelete();
-          if (mounted) setState(() => _isConfirmingDelete = false);
         }
       });
     _deleteTimer!.forward();
