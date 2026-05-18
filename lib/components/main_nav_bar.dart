@@ -51,7 +51,7 @@ class MainNavBar extends StatelessWidget {
 
   static const _caregiverItems = [
     _NavBarItem(icon: Icons.tune, label: 'Configurar', route: '/tratamientos/home'),
-    _NavBarItem(icon: Icons.grid_view_rounded, label: 'Dashboard', route: ''),
+    _NavBarItem(icon: Icons.grid_view_rounded, label: 'Dashboard', route: '/dashboard'),
     _NavBarItem(icon: Icons.person, label: 'Perfil', route: '/profile/caregiver'),
   ];
 
