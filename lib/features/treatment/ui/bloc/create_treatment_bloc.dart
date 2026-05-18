@@ -58,7 +58,7 @@ class CreateTreatmentState {
     this.medicineName = '',
     this.dose = '',
     this.unit = 'mg',
-    this.frequency = 'Cada 8 horas',
+    this.frequency = 'Cada 8h',
     this.startTime = '',
     this.restrictions = const [],
     this.isLoading = false,

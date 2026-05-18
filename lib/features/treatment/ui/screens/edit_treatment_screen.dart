@@ -5,15 +5,18 @@ import '../../../../components/app_colors.dart';
 import '../../../../components/medsync_back_button.dart';
 import '../../../../components/medsync_button.dart';
 import '../../domain/model/treatment_model.dart';
+import '../../domain/usecases/update_treatment_usecase.dart';
 import '../widgets/configuration_section.dart';
 import '../widgets/restrictions_section.dart';
 
 class EditTreatmentScreen extends StatefulWidget {
+  final String treatmentId;
   final TreatmentModel initialTreatment;
   final String patientName;
 
   const EditTreatmentScreen({
     super.key,
+    required this.treatmentId,
     required this.initialTreatment,
     required this.patientName,
   });
@@ -23,12 +26,14 @@ class EditTreatmentScreen extends StatefulWidget {
 }
 
 class _EditTreatmentScreenState extends State<EditTreatmentScreen> {
+  final _usecase = UpdateTreatmentUsecase();
   late TextEditingController _medicineController;
   late TextEditingController _doseController;
   late String _selectedUnit;
   late String _selectedFrequency;
   late String _startTime;
   late List<String> _selectedRestrictions;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -49,15 +54,40 @@ class _EditTreatmentScreenState extends State<EditTreatmentScreen> {
   }
 
   void _saveChanges() {
-    // Aquí iría la lógica para enviar al Repositorio / Bloc
-    // Simularemos éxito
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Tratamiento actualizado exitosamente'),
-        backgroundColor: AppColors.primary,
-      ),
+    if (_isSaving) return;
+
+    final updatedTreatment = TreatmentModel(
+      medicineName: _medicineController.text.trim(),
+      dose: _doseController.text.trim(),
+      unit: _selectedUnit,
+      frequency: _selectedFrequency,
+      startTime: _startTime,
+      restrictions: List.unmodifiable(_selectedRestrictions),
     );
-    Navigator.pop(context); // Volveríamos a Ver Tratamientos
+
+    setState(() => _isSaving = true);
+
+    _usecase.execute(widget.treatmentId, updatedTreatment).then((_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tratamiento actualizado exitosamente'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+      Navigator.pop(context, true);
+    }).catchError((error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No se pudo actualizar el tratamiento: $error'),
+          backgroundColor: AppColors.dangerText,
+        ),
+      );
+      setState(() => _isSaving = false);
+    });
   }
 
   @override
@@ -172,7 +202,8 @@ class _EditTreatmentScreenState extends State<EditTreatmentScreen> {
                 // Footer Botón Guardar
                 MedSyncButton(
                   label: 'Guardar cambios',
-                  onPressed: _saveChanges,
+                  isLoading: _isSaving,
+                  onPressed: _isSaving ? null : _saveChanges,
                   leadingIcon: Icons.edit,
                 ),
                 const SizedBox(height: 16),
