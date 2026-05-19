@@ -53,7 +53,7 @@ class DashboardDataSource {
       return DailySummaryModel(patientName: patientName, notifications: []);
     }
 
-    final startOfDay = DateTime(date.year, date.month, date.day);
+    final startOfDay = DateTime(date.year, date.month, date.day).toUtc();
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     final notificationsResp = await _client
