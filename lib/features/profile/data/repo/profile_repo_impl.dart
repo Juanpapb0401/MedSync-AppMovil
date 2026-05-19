@@ -7,4 +7,9 @@ class ProfileRepoImpl implements ProfileRepo {
 
   @override
   Future<ProfileModel> getProfile() => _source.getProfile();
+
+  @override
+  Future<void> linkPatientToCaregiver(String patientCode) {
+    return _source.linkPatientToCaregiver(patientCode);
+  }
 }

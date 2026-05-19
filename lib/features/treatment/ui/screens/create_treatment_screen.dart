@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../components/components.dart';
-import '../../../../components/app_colors.dart';
 import '../bloc/create_treatment_bloc.dart';
 import '../widgets/treatment_form_header.dart';
 import '../widgets/configuration_section.dart';
@@ -38,7 +37,7 @@ class _CreateTreatmentScreenState extends State<CreateTreatmentScreen> {
                 backgroundColor: AppColors.primary,
               ),
             );
-            Navigator.pop(context); // O navegar a la lista
+            Navigator.pop(context, true);
           }
           if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -74,6 +73,7 @@ class _CreateTreatmentScreenState extends State<CreateTreatmentScreen> {
                           onUnitChanged: (val) => bloc.add(UpdateUnit(val)),
                           onFrequencyChanged: (val) => bloc.add(UpdateFrequency(val)),
                           onStartTimeTap: () async {
+                            final localizations = MaterialLocalizations.of(context);
                             final TimeOfDay? picked = await showTimePicker(
                               context: context,
                               initialTime: TimeOfDay.now(),
@@ -88,8 +88,12 @@ class _CreateTreatmentScreenState extends State<CreateTreatmentScreen> {
                                 );
                               },
                             );
-                            if (picked != null) {
-                              final formatted = picked.format(context);
+                            if (!mounted || picked == null) {
+                              return;
+                            }
+
+                            final formatted = localizations.formatTimeOfDay(picked);
+                            if (mounted) {
                               bloc.add(UpdateStartTime(formatted));
                             }
                           },

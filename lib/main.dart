@@ -9,9 +9,10 @@ import 'features/auth/ui/screens/caregiver_register_screen.dart';
 import 'features/profile/ui/screens/caregiver_profile_screen.dart';
 import 'features/profile/ui/screens/patient_profile_screen.dart';
 import 'features/treatment/ui/screens/treatment_home_screen.dart';
-import 'features/treatment/ui/screens/treatments_list_placeholder_screen.dart';
+import 'features/treatment/ui/screens/treatments_list_screen.dart';
 import 'features/treatment/ui/screens/create_treatment_screen.dart';
 import 'features/rutina/ui/screens/rutina_screen.dart';
+import 'features/dashboard/ui/screens/dashboard_screen.dart';
 
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
 import 'features/auth/ui/screens/forgot_password_screen.dart';
@@ -69,23 +70,39 @@ class MedSyncApp extends StatelessWidget {
         '/rutina': (_) => const RutinaScreen(),
         '/configurar': (_) => const TreatmentHomeScreen(),
         '/tratamientos/home': (_) => const TreatmentHomeScreen(),
-        '/tratamientos/lista': (_) => const TreatmentsListPlaceholderScreen(),
+        '/tratamientos/lista': (_) => const TreatmentsListScreen(),
         '/tratamientos/crear': (_) => const CreateTreatmentScreen(),
         '/tratamientos/editar': (context) {
-          // Dummy data base placeholder
-          const dummyTreatment = TreatmentModel(
-            medicineName: 'Metformina',
-            dose: '850',
-            unit: 'mg',
-            frequency: 'Cada 8 horas',
-            startTime: '08:00 AM',
-            restrictions: ['Evitar lácteos', 'No alcohol'],
-          );
+          final args = ModalRoute.of(context)?.settings.arguments;
+
+          if (args is Map<String, dynamic>) {
+            final treatmentId = args['treatmentId'] as String?;
+            final treatment = args['treatment'];
+            final patientName = args['patientName'] as String?;
+
+            if (treatmentId != null && treatment is TreatmentModel && patientName != null) {
+              return EditTreatmentScreen(
+                treatmentId: treatmentId,
+                initialTreatment: treatment,
+                patientName: patientName,
+              );
+            }
+          }
+
           return const EditTreatmentScreen(
-            initialTreatment: dummyTreatment,
+            treatmentId: 'demo-treatment-id',
+            initialTreatment: TreatmentModel(
+              medicineName: 'Metformina',
+              dose: '850',
+              unit: 'mg',
+              frequency: 'Cada 8h',
+              startTime: '08:00 AM',
+              restrictions: ['Evitar lácteos', 'No alcohol'],
+            ),
             patientName: 'María',
           );
         },
+        '/dashboard': (_) => const DashboardScreen(),
         '/profile/caregiver': (_) => const CaregiverProfileScreen(),
         '/profile/patient': (_) => const PatientProfileScreen(),
         '/dev': (_) => const ComponentsPreviewScreen(),
