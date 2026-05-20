@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../auth/domain/usecases/logout_usecase.dart';
 import '../../../../components/app_colors.dart';
 
 class LogoutButton extends StatelessWidget {
@@ -85,7 +85,8 @@ class LogoutButton extends StatelessWidget {
                     height: 52,
                     child: ElevatedButton(
                       onPressed: () async {
-                        await Supabase.instance.client.auth.signOut();
+                        final logoutUsecase = LogoutUsecase();
+                        await logoutUsecase.execute();
                         if (context.mounted) {
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             '/auth/login',

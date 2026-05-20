@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/repo/forgot_password_repo.dart';
+import '../../domain/repo/forgot_password_repo.dart';
+import '../../domain/usecases/verify_otp_usecase.dart';
+import '../../data/repo/forgot_password_repo_impl.dart';
 
 // Events
 abstract class OtpVerificationEvent {}
@@ -29,13 +31,15 @@ class OtpVerificationError extends OtpVerificationState {
 // Bloc
 class OtpVerificationBloc
     extends Bloc<OtpVerificationEvent, OtpVerificationState> {
-  final ForgotPasswordRepo _repo = ForgotPasswordRepo();
+  late final VerifyOtpUsecase _usecase;
 
-  OtpVerificationBloc() : super(OtpVerificationInitial()) {
+  OtpVerificationBloc()
+      : super(OtpVerificationInitial()) {
+    _usecase = VerifyOtpUsecase(ForgotPasswordRepoImpl());
     on<OtpVerificationRequested>((event, emit) async {
       emit(OtpVerificationLoading());
       try {
-        await _repo.verifyOTP(event.email, event.token);
+        await _usecase.execute(event.email, event.token);
         emit(OtpVerificationSuccess());
       } catch (e) {
         emit(

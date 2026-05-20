@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/repo/forgot_password_repo.dart';
+import '../../domain/repo/forgot_password_repo.dart';
+import '../../domain/usecases/send_reset_email_usecase.dart';
+import '../../data/repo/forgot_password_repo_impl.dart';
 
 // Events
 abstract class ForgotPasswordEvent {}
@@ -26,16 +28,17 @@ class ForgotPasswordError extends ForgotPasswordState {
 // Bloc
 class ForgotPasswordBloc
     extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
-  final ForgotPasswordRepo _repo = ForgotPasswordRepo();
+  late final SendResetEmailUsecase _usecase;
 
-  ForgotPasswordBloc() : super(ForgotPasswordInitial()) {
+  ForgotPasswordBloc()
+      : super(ForgotPasswordInitial()) {
+    _usecase = SendResetEmailUsecase(ForgotPasswordRepoImpl());
     on<ForgotPasswordRequested>((event, emit) async {
       emit(ForgotPasswordLoading());
       try {
-        await _repo.sendResetEmail(event.email);
+        await _usecase.execute(event.email);
         emit(ForgotPasswordSuccess());
       } catch (e) {
-        print('DEBUG: Error enviando correo de recuperación: $e');
         emit(
           ForgotPasswordError('No se pudo enviar el correo. Intenta de nuevo.'),
         );
