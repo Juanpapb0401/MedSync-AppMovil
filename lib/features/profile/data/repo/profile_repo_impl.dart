@@ -12,4 +12,9 @@ class ProfileRepoImpl implements ProfileRepo {
   Future<void> linkPatientToCaregiver(String patientCode) {
     return _source.linkPatientToCaregiver(patientCode);
   }
+
+  @override
+  Future<void> refreshLinkingCodeIfNeeded() {
+    return _source.refreshLinkingCodeIfNeeded();
+  }
 }
