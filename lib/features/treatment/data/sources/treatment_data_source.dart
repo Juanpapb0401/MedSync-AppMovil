@@ -95,15 +95,27 @@ class TreatmentDataSource {
     if (treatment.frequency.contains('12')) intervalHours = 12;
     if (treatment.frequency.contains('24')) intervalHours = 24;
 
-    await _client.from('schedule').insert({
+    final normalizedTime = _normalizeStartTime(treatment.startTime);
+
+    final scheduleRow = await _client.from('schedule').insert({
       'frequency_type': 'intervalo',
       'interval_hours': intervalHours,
-      if (_normalizeStartTime(treatment.startTime) != null)
-        'time': _normalizeStartTime(treatment.startTime),
+      if (normalizedTime != null) 'time': normalizedTime,
       'treatment_id': treatmentId,
-    });
+    }).select('id').single();
 
-    // 5. Insert Restrictions
+    // 5. Generate notifications for the next 30 days
+    final scheduleId = scheduleRow['id'] as String;
+    final notifications = _buildNotifications(
+      scheduleId: scheduleId,
+      startTimeStr: normalizedTime ?? '08:00:00',
+      intervalHours: intervalHours,
+    );
+    if (notifications.isNotEmpty) {
+      await _client.from('notification').insert(notifications);
+    }
+
+    // 6. Insert Restrictions
     if (treatment.restrictions.isNotEmpty) {
       final restrictionsToInsert = treatment.restrictions.map((r) => {
         'treatment_id': treatmentId,
@@ -170,10 +182,31 @@ class TreatmentDataSource {
       scheduleUpdate['time'] = normalizedTime;
     }
 
-    await _client
+    final scheduleRow = await _client
         .from('schedule')
         .update(scheduleUpdate)
-        .eq('treatment_id', treatmentId);
+        .eq('treatment_id', treatmentId)
+        .select('id')
+        .single();
+
+    // Regenerate future pending notifications when schedule changes
+    final scheduleId = scheduleRow['id'] as String;
+    final now = DateTime.now().toUtc().toIso8601String();
+    await _client
+        .from('notification')
+        .delete()
+        .eq('schedule_id', scheduleId)
+        .eq('status', 'pendiente')
+        .gte('scheduled_datetime', now);
+
+    final regenNotifications = _buildNotifications(
+      scheduleId: scheduleId,
+      startTimeStr: normalizedTime ?? '08:00:00',
+      intervalHours: intervalHours,
+    );
+    if (regenNotifications.isNotEmpty) {
+      await _client.from('notification').insert(regenNotifications);
+    }
 
     await _client.from('restriction').delete().eq('treatment_id', treatmentId);
 
@@ -343,5 +376,39 @@ class TreatmentDataSource {
       return value % 1 == 0 ? value.toInt().toString() : value.toString();
     }
     return dose.toString();
+  }
+
+  List<Map<String, dynamic>> _buildNotifications({
+    required String scheduleId,
+    required String startTimeStr,
+    required int intervalHours,
+    int daysAhead = 30,
+  }) {
+    final results = <Map<String, dynamic>>[];
+    final parts = startTimeStr.split(':');
+    final startHour = int.tryParse(parts[0]) ?? 8;
+    final startMinute = int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0;
+
+    final today = DateTime.now();
+    final startDate = DateTime(today.year, today.month, today.day);
+
+    for (int dayOffset = 0; dayOffset < daysAhead; dayOffset++) {
+      final date = startDate.add(Duration(days: dayOffset));
+      final endOfDay = date.add(const Duration(days: 1));
+      var current = DateTime(date.year, date.month, date.day, startHour, startMinute);
+
+      while (current.isBefore(endOfDay)) {
+        final iso = current.toUtc().toIso8601String();
+        results.add({
+          'scheduled_datetime': iso,
+          'original_scheduled_datetime': iso,
+          'status': 'pendiente',
+          'schedule_id': scheduleId,
+        });
+        current = current.add(Duration(hours: intervalHours));
+      }
+    }
+
+    return results;
   }
 }
