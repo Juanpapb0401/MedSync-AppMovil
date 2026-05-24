@@ -12,6 +12,8 @@ import 'features/treatment/ui/screens/treatment_home_screen.dart';
 import 'features/treatment/ui/screens/treatments_list_screen.dart';
 import 'features/treatment/ui/screens/create_treatment_screen.dart';
 import 'features/rutina/ui/screens/rutina_screen.dart';
+import 'features/rutina/ui/screens/confirmar_toma_screen.dart';
+import 'features/rutina/domain/model/rutina_medicamento_model.dart';
 import 'features/dashboard/ui/screens/dashboard_screen.dart';
 
 import 'features/onboarding/ui/screens/onboarding_screen.dart';
@@ -68,6 +70,20 @@ class MedSyncApp extends StatelessWidget {
         '/auth/role-selection': (_) => const RoleSelectionScreen(),
         '/code': (_) => const CodeBindingScreen(),
         '/rutina': (_) => const RutinaScreen(),
+        '/rutina/confirmar-toma': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+          if (args is Map<String, dynamic>) {
+            final medicamento = args['medicamento'] as RutinaMedicamentoModel?;
+            final currentDate = args['currentDate'] as DateTime?;
+            if (medicamento != null && currentDate != null) {
+              return ConfirmarTomaScreen(
+                medicamento: medicamento,
+                currentDate: currentDate,
+              );
+            }
+          }
+          return const RutinaScreen();
+        },
         '/configurar': (_) => const TreatmentHomeScreen(),
         '/tratamientos/home': (_) => const TreatmentHomeScreen(),
         '/tratamientos/lista': (_) => const TreatmentsListScreen(),
