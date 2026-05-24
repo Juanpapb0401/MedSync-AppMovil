@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../auth/domain/usecases/logout_usecase.dart';
+import '../../../auth/data/repo/logout_repo_impl.dart';
 import '../../../../components/app_colors.dart';
 
 class LogoutButton extends StatelessWidget {
@@ -85,7 +86,7 @@ class LogoutButton extends StatelessWidget {
                     height: 52,
                     child: ElevatedButton(
                       onPressed: () async {
-                        final logoutUsecase = LogoutUsecase();
+                        final logoutUsecase = LogoutUsecase(LogoutRepoImpl());
                         await logoutUsecase.execute();
                         if (context.mounted) {
                           Navigator.of(context).pushNamedAndRemoveUntil(

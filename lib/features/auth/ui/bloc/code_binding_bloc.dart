@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/get_linking_code_usecase.dart';
+import '../../data/repo/get_linking_code_repo_impl.dart';
 
 abstract class CodeBindingEvent {}
 
@@ -28,7 +29,7 @@ class CodeBindingBloc extends Bloc<CodeBindingEvent, CodeBindingState> {
 
   CodeBindingBloc() 
       : super(CodeBindingInitialState()) {
-    _usecase = GetLinkingCodeUsecase();
+    _usecase = GetLinkingCodeUsecase(GetLinkingCodeRepoImpl());
     on<LoadCodeBindingEvent>((event, emit) async {
       emit(CodeBindingLoadingState());
       try {

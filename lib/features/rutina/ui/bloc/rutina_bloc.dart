@@ -5,6 +5,7 @@ import '../../domain/usecases/update_intake_status_usecase.dart';
 import '../../data/repo/rutina_repo_impl.dart';
 import '../../data/sources/rutina_data_source.dart';
 import '../../../profile/domain/usecases/get_profile_usecase.dart';
+import '../../../profile/data/repo/profile_repo_impl.dart';
 
 // Events
 abstract class RutinaEvent {}
@@ -64,7 +65,7 @@ class RutinaBloc extends Bloc<RutinaEvent, RutinaState> {
             GetDailyRutinaUsecase(RutinaRepoImpl(RutinaDataSource())),
         _updateIntakeStatusUsecase = updateIntakeStatusUsecase ??
             UpdateIntakeStatusUsecase(RutinaRepoImpl(RutinaDataSource())),
-        _getProfileUsecase = getProfileUsecase ?? GetProfileUsecase(),
+        _getProfileUsecase = getProfileUsecase ?? GetProfileUsecase(ProfileRepoImpl()),
         super(RutinaInitialState()) {
     
     on<LoadRutinaEvent>((event, emit) async {

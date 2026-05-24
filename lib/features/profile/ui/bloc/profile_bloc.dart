@@ -28,7 +28,7 @@ class ProfileErrorState extends ProfileState {
 
 // BLoC
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GetProfileUsecase _getProfileUsecase = GetProfileUsecase();
+  final GetProfileUsecase _getProfileUsecase = GetProfileUsecase(ProfileRepoImpl());
   late final RefreshLinkingCodeUsecase _refreshLinkingCodeUsecase;
 
   ProfileBloc()

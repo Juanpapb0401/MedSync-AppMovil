@@ -1,7 +1,8 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../repo/logout_repo.dart';
 
 class LogoutUsecase {
-  Future<void> execute() async {
-    await Supabase.instance.client.auth.signOut();
-  }
+  final LogoutRepo _repo;
+  LogoutUsecase(this._repo);
+
+  Future<void> execute() => _repo.logout();
 }
