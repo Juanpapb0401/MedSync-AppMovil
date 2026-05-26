@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 import '../../../profile/domain/model/profile_model.dart';
 import '../repo/auth_repo.dart';
-import '../../data/repo/auth_repo_impl.dart';
 
 class PatientRegisterUsecase {
-  final AuthRepo _repo = AuthRepoImpl();
+  final AuthRepo _repo;
+
+  PatientRegisterUsecase(this._repo);
 
   Future<ProfileModel> execute(
     String fullName,
