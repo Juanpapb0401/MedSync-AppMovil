@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/components.dart';
 import '../bloc/otp_verification_bloc.dart';
 
@@ -20,7 +22,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         ModalRoute.of(context)?.settings.arguments as String? ?? '';
 
     return BlocProvider(
-      create: (_) => OtpVerificationBloc(),
+      create: (_) => sl<OtpVerificationBloc>(),
       child: BlocConsumer<OtpVerificationBloc, OtpVerificationState>(
         listener: (context, state) {
           if (state is OtpVerificationSuccess) {
@@ -65,7 +67,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.10),
+                            color: AppColors.primary.withValues(alpha: 0.10),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

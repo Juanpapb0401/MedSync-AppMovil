@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/components.dart';
 import '../bloc/patient_register_bloc.dart';
 import '../pages/patient_register_page.dart';
@@ -10,7 +12,7 @@ class PatientRegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PatientRegisterBloc(),
+      create: (_) => sl<PatientRegisterBloc>(),
       child: const Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(

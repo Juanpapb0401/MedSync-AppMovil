@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/components.dart';
 import '../bloc/code_binding_bloc.dart';
 
@@ -20,7 +21,7 @@ class _CodeBindingScreenState extends State<CodeBindingScreen> {
   @override
   void initState() {
     super.initState();
-    _bloc = CodeBindingBloc()..add(LoadCodeBindingEvent());
+    _bloc = sl<CodeBindingBloc>()..add(LoadCodeBindingEvent());
   }
 
   @override

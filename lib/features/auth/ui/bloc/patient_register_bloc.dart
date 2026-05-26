@@ -38,9 +38,9 @@ class PatientRegisterFailState extends PatientRegisterState {
 // BLoC
 class PatientRegisterBloc
     extends Bloc<PatientRegisterEvent, PatientRegisterState> {
-  final PatientRegisterUsecase _usecase = PatientRegisterUsecase();
+  final PatientRegisterUsecase _usecase;
 
-  PatientRegisterBloc() : super(PatientRegisterInitialState()) {
+  PatientRegisterBloc(this._usecase) : super(PatientRegisterInitialState()) {
     on<PatientRegisterSubmitEvent>((event, emit) async {
       emit(PatientRegisterLoadingState());
       try {

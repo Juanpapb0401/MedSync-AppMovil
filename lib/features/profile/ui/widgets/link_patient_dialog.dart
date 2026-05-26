@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../components/app_colors.dart';
 import '../../../../components/components.dart';
 import '../bloc/link_patient_bloc.dart';
 

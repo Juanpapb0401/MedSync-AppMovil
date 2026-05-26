@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/repo/forgot_password_repo.dart';
 import '../../domain/usecases/send_reset_email_usecase.dart';
-import '../../data/repo/forgot_password_repo_impl.dart';
 
 // Events
 abstract class ForgotPasswordEvent {}
@@ -30,9 +28,7 @@ class ForgotPasswordBloc
     extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
   late final SendResetEmailUsecase _usecase;
 
-  ForgotPasswordBloc()
-      : super(ForgotPasswordInitial()) {
-    _usecase = SendResetEmailUsecase(ForgotPasswordRepoImpl());
+  ForgotPasswordBloc(this._usecase) : super(ForgotPasswordInitial()) {
     on<ForgotPasswordRequested>((event, emit) async {
       emit(ForgotPasswordLoading());
       try {

@@ -1,4 +1,4 @@
-import 'package:get_it/get_it.dart';
+import 'package:medsync/di/service_locator.dart';
 
 // ========================== Auth ==========================
 // -------------------------- data --------------------------
@@ -44,8 +44,6 @@ import 'package:medsync/features/auth/ui/bloc/patient_register_bloc.dart';
 
 // ========================== Treatment ==========================
 
-final sl = GetIt.instance;
-
 Future<void> initDependencies() async {
     // ========================== Auth ==========================
     sl.registerLazySingleton<AuthRepo>(() => AuthRepoImpl(sl()));
@@ -64,12 +62,12 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton(() => SendResetEmailUsecase(sl()));
     sl.registerLazySingleton(() => UpdatePasswordUsecase(sl()));
     sl.registerLazySingleton(() => VerifyOtpUsecase(sl()));
-    sl.registerFactory<CaregiverRegisterBloc>(() => CaregiverRegisterBloc());
-    sl.registerFactory<CodeBindingBloc>(() => CodeBindingBloc());
-    sl.registerFactory<CreateNewPasswordBloc>(() => CreateNewPasswordBloc());
-    sl.registerFactory<ForgotPasswordBloc>(() => ForgotPasswordBloc());
-    sl.registerFactory<LoginBloc>(() => LoginBloc());
-    sl.registerFactory<OtpVerificationBloc>(() => OtpVerificationBloc());
-    sl.registerFactory<PatientRegisterBloc>(() => PatientRegisterBloc());
+    sl.registerFactory<CaregiverRegisterBloc>(() => CaregiverRegisterBloc(sl()));
+    sl.registerFactory<CodeBindingBloc>(() => CodeBindingBloc(sl()));
+    sl.registerFactory<CreateNewPasswordBloc>(() => CreateNewPasswordBloc(sl()));
+    sl.registerFactory<ForgotPasswordBloc>(() => ForgotPasswordBloc(sl()));
+    sl.registerFactory<LoginBloc>(() => LoginBloc(sl()));
+    sl.registerFactory<OtpVerificationBloc>(() => OtpVerificationBloc(sl()));
+    sl.registerFactory<PatientRegisterBloc>(() => PatientRegisterBloc(sl()));
 
 }
