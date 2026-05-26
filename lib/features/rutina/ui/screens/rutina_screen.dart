@@ -285,7 +285,29 @@ class _MedicationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showStatusSheet(context),
+      onTap: () {
+        if (intake.isPending) {
+          final bloc = context.read<RutinaBloc>();
+          Navigator.pushNamed(
+            context,
+            '/rutina/confirmar-toma',
+            arguments: {
+              'medicamento': intake,
+              'currentDate': currentDate,
+            },
+          ).then((result) {
+            if (result == 'tomado') {
+              bloc.add(UpdateStatusEvent(
+                notificationId: intake.notificationId,
+                newStatus: 'tomado',
+                date: currentDate,
+              ));
+            }
+          });
+        } else {
+          _showStatusSheet(context);
+        }
+      },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
