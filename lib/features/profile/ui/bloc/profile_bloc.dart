@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/model/profile_model.dart';
 import '../../domain/usecases/get_profile_usecase.dart';
 import '../../domain/usecases/refresh_linking_code_usecase.dart';
-import '../../data/repo/profile_repo_impl.dart';
 
 // Events
 abstract class ProfileEvent {}
@@ -28,12 +27,11 @@ class ProfileErrorState extends ProfileState {
 
 // BLoC
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GetProfileUsecase _getProfileUsecase = GetProfileUsecase(ProfileRepoImpl());
-  late final RefreshLinkingCodeUsecase _refreshLinkingCodeUsecase;
+  final GetProfileUsecase _getProfileUsecase;
+  final RefreshLinkingCodeUsecase _refreshLinkingCodeUsecase;
 
-  ProfileBloc()
-      : super(ProfileInitialState()) {
-    _refreshLinkingCodeUsecase = RefreshLinkingCodeUsecase(ProfileRepoImpl());
+  ProfileBloc(this._getProfileUsecase, this._refreshLinkingCodeUsecase)
+    : super(ProfileInitialState()) {
     on<LoadProfileEvent>((event, emit) async {
       emit(ProfileLoadingState());
       try {

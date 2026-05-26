@@ -46,9 +46,20 @@ import 'package:medsync/features/dashboard/domain/usecases/get_daily_summary_use
 // -------------------------- bloc --------------------------
 import 'package:medsync/features/dashboard/ui/bloc/dashboard_bloc.dart';
 
-// ========================== Onboarding ==========================
-
 // ========================== Profile ==========================
+// -------------------------- data --------------------------
+import 'package:medsync/features/profile/data/repo/profile_repo_impl.dart';
+import 'package:medsync/features/profile/data/sources/profile_data_source.dart';
+
+// -------------------------- domain --------------------------
+import 'package:medsync/features/profile/domain/repo/profile_repo.dart';
+import 'package:medsync/features/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:medsync/features/profile/domain/usecases/link_patient_usecase.dart';
+import 'package:medsync/features/profile/domain/usecases/refresh_linking_code_usecase.dart';
+
+// -------------------------- bloc --------------------------
+import 'package:medsync/features/profile/ui/bloc/link_patient_bloc.dart';
+import 'package:medsync/features/profile/ui/bloc/profile_bloc.dart';
 
 // ========================== Rutina ==========================
 
@@ -85,5 +96,14 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton<DashboardDataSource>(() => DashboardDataSource());
     sl.registerLazySingleton(() => GetDailySummaryUsecase(sl()));
     sl.registerFactory<DashboardBloc>(() => DashboardBloc(sl()));
+
+    // ========================== Profile ==========================
+    sl.registerCachedFactory<ProfileRepo>(() => ProfileRepoImpl(sl()));
+    sl.registerCachedFactory<ProfileDataSource>(() => ProfileDataSource());
+    sl.registerCachedFactory(() => GetProfileUsecase(sl()));
+    sl.registerCachedFactory(() => LinkPatientUsecase(sl()));
+    sl.registerCachedFactory(() => RefreshLinkingCodeUsecase(sl()));
+    sl.registerFactory<LinkPatientBloc>(() => LinkPatientBloc(sl()));
+    sl.registerFactory<ProfileBloc>(() => ProfileBloc(sl(), sl()));
 
 }

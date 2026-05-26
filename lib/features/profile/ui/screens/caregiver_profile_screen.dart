@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/app_colors.dart';
 import '../../../../components/main_nav_bar.dart';
 import '../bloc/link_patient_bloc.dart';
@@ -20,10 +22,10 @@ class CaregiverProfileScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => ProfileBloc()..add(LoadProfileEvent()),
+          create: (_) => sl<ProfileBloc>()..add(LoadProfileEvent()),
         ),
         BlocProvider(
-          create: (_) => LinkPatientBloc(),
+          create: (_) => sl<LinkPatientBloc>(),
         ),
       ],
       child: const _CaregiverProfileView(),
