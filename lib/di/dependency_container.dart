@@ -35,6 +35,16 @@ import 'package:medsync/features/auth/ui/bloc/otp_verification_bloc.dart';
 import 'package:medsync/features/auth/ui/bloc/patient_register_bloc.dart';
 
 // ========================== Dashboard ==========================
+// -------------------------- data --------------------------
+import 'package:medsync/features/dashboard/data/repo/dashboard_repo_impl.dart';
+import 'package:medsync/features/dashboard/data/sources/dashboard_data_source.dart';
+
+// -------------------------- domain --------------------------
+import 'package:medsync/features/dashboard/domain/repo/dashboard_repo.dart';
+import 'package:medsync/features/dashboard/domain/usecases/get_daily_summary_usecase.dart';
+
+// -------------------------- bloc --------------------------
+import 'package:medsync/features/dashboard/ui/bloc/dashboard_bloc.dart';
 
 // ========================== Onboarding ==========================
 
@@ -69,5 +79,11 @@ Future<void> initDependencies() async {
     sl.registerFactory<LoginBloc>(() => LoginBloc(sl()));
     sl.registerFactory<OtpVerificationBloc>(() => OtpVerificationBloc(sl()));
     sl.registerFactory<PatientRegisterBloc>(() => PatientRegisterBloc(sl()));
+
+    // ========================== Dashboard ==========================
+    sl.registerLazySingleton<DashboardRepo>(() => DashboardRepoImpl(sl()));
+    sl.registerLazySingleton<DashboardDataSource>(() => DashboardDataSource());
+    sl.registerLazySingleton(() => GetDailySummaryUsecase(sl()));
+    sl.registerFactory<DashboardBloc>(() => DashboardBloc(sl()));
 
 }
