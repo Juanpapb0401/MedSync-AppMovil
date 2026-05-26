@@ -62,6 +62,17 @@ import 'package:medsync/features/profile/ui/bloc/link_patient_bloc.dart';
 import 'package:medsync/features/profile/ui/bloc/profile_bloc.dart';
 
 // ========================== Rutina ==========================
+// -------------------------- data --------------------------
+import 'package:medsync/features/rutina/data/repo/rutina_repo_impl.dart';
+import 'package:medsync/features/rutina/data/sources/rutina_data_source.dart';
+
+// -------------------------- domain --------------------------
+import 'package:medsync/features/rutina/domain/repo/rutina_repo.dart';
+import 'package:medsync/features/rutina/domain/usecases/get_daily_rutina_usecase.dart';
+import 'package:medsync/features/rutina/domain/usecases/update_intake_status_usecase.dart';
+
+// -------------------------- bloc --------------------------
+import 'package:medsync/features/rutina/ui/bloc/rutina_bloc.dart';
 
 // ========================== Treatment ==========================
 
@@ -105,5 +116,12 @@ Future<void> initDependencies() async {
     sl.registerCachedFactory(() => RefreshLinkingCodeUsecase(sl()));
     sl.registerFactory<LinkPatientBloc>(() => LinkPatientBloc(sl()));
     sl.registerFactory<ProfileBloc>(() => ProfileBloc(sl(), sl()));
+
+    // ========================== Rutina ==========================
+    sl.registerLazySingleton<RutinaRepo>(() => RutinaRepoImpl(sl()));
+    sl.registerLazySingleton<RutinaDataSource>(() => RutinaDataSource());
+    sl.registerLazySingleton(() => GetDailyRutinaUsecase(sl()));
+    sl.registerLazySingleton(() => UpdateIntakeStatusUsecase(sl()));
+    sl.registerFactory<RutinaBloc>(() => RutinaBloc(sl(), sl(), sl()));
 
 }

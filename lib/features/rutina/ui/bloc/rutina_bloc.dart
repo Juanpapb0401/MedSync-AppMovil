@@ -2,10 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/model/rutina_medicamento_model.dart';
 import '../../domain/usecases/get_daily_rutina_usecase.dart';
 import '../../domain/usecases/update_intake_status_usecase.dart';
-import '../../data/repo/rutina_repo_impl.dart';
-import '../../data/sources/rutina_data_source.dart';
 import '../../../profile/domain/usecases/get_profile_usecase.dart';
-import '../../../profile/data/repo/profile_repo_impl.dart';
 
 // Events
 abstract class RutinaEvent {}
@@ -57,57 +54,66 @@ class RutinaBloc extends Bloc<RutinaEvent, RutinaState> {
   final UpdateIntakeStatusUsecase _updateIntakeStatusUsecase;
   final GetProfileUsecase _getProfileUsecase;
 
-  RutinaBloc({
-    GetDailyRutinaUsecase? getDailyRutinaUsecase,
-    UpdateIntakeStatusUsecase? updateIntakeStatusUsecase,
-    GetProfileUsecase? getProfileUsecase,
-  })  : _getDailyRutinaUsecase = getDailyRutinaUsecase ??
-            GetDailyRutinaUsecase(RutinaRepoImpl(RutinaDataSource())),
-        _updateIntakeStatusUsecase = updateIntakeStatusUsecase ??
-            UpdateIntakeStatusUsecase(RutinaRepoImpl(RutinaDataSource())),
-        _getProfileUsecase = getProfileUsecase ?? GetProfileUsecase(ProfileRepoImpl()),
-        super(RutinaInitialState()) {
-    
+  RutinaBloc(
+    this._getDailyRutinaUsecase,
+    this._updateIntakeStatusUsecase,
+    this._getProfileUsecase,
+  ) : super(RutinaInitialState()) {
     on<LoadRutinaEvent>((event, emit) async {
       emit(RutinaLoadingState());
       try {
         final profile = await _getProfileUsecase.execute();
         final patientName = profile.fullName;
-        
-        final routine = await _getDailyRutinaUsecase.execute(event.date);
-        
-        // Sort chronologically by scheduled time
-        routine.sort((a, b) => a.scheduledDateTime.compareTo(b.scheduledDateTime));
 
-        emit(RutinaLoadedState(
-          patientName: patientName,
-          routine: routine,
-          currentDate: event.date,
-        ));
+        final routine = await _getDailyRutinaUsecase.execute(event.date);
+
+        // Sort chronologically by scheduled time
+        routine.sort(
+          (a, b) => a.scheduledDateTime.compareTo(b.scheduledDateTime),
+        );
+
+        emit(
+          RutinaLoadedState(
+            patientName: patientName,
+            routine: routine,
+            currentDate: event.date,
+          ),
+        );
       } catch (e) {
-        emit(RutinaErrorState('No se pudo cargar tu rutina. Intenta de nuevo.'));
+        emit(
+          RutinaErrorState('No se pudo cargar tu rutina. Intenta de nuevo.'),
+        );
       }
     });
 
     on<UpdateStatusEvent>((event, emit) async {
       // Best-effort optimistic UI state could be implemented, but simple load works perfectly here.
       try {
-        await _updateIntakeStatusUsecase.execute(event.notificationId, event.newStatus);
-        
+        await _updateIntakeStatusUsecase.execute(
+          event.notificationId,
+          event.newStatus,
+        );
+
         // Re-load the routine data
         final profile = await _getProfileUsecase.execute();
         final patientName = profile.fullName;
         final routine = await _getDailyRutinaUsecase.execute(event.date);
-        
-        routine.sort((a, b) => a.scheduledDateTime.compareTo(b.scheduledDateTime));
 
-        emit(RutinaLoadedState(
-          patientName: patientName,
-          routine: routine,
-          currentDate: event.date,
-        ));
+        routine.sort(
+          (a, b) => a.scheduledDateTime.compareTo(b.scheduledDateTime),
+        );
+
+        emit(
+          RutinaLoadedState(
+            patientName: patientName,
+            routine: routine,
+            currentDate: event.date,
+          ),
+        );
       } catch (_) {
-        emit(RutinaErrorState('No se pudo actualizar el estado del medicamento.'));
+        emit(
+          RutinaErrorState('No se pudo actualizar el estado del medicamento.'),
+        );
       }
     });
   }
