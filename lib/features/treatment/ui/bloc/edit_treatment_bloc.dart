@@ -1,49 +1,47 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/model/treatment_model.dart';
-import '../../domain/usecases/create_treatment_usecase.dart';
+import '../../domain/usecases/update_treatment_usecase.dart';
 
-// Events
-abstract class CreateTreatmentEvent {}
+abstract class EditTreatmentEvent {}
 
-class UpdateMedicineName extends CreateTreatmentEvent {
+class EditUpdateMedicineName extends EditTreatmentEvent {
   final String name;
-  UpdateMedicineName(this.name);
+  EditUpdateMedicineName(this.name);
 }
 
-class UpdateDose extends CreateTreatmentEvent {
+class EditUpdateDose extends EditTreatmentEvent {
   final String dose;
-  UpdateDose(this.dose);
+  EditUpdateDose(this.dose);
 }
 
-class UpdateUnit extends CreateTreatmentEvent {
+class EditUpdateUnit extends EditTreatmentEvent {
   final String unit;
-  UpdateUnit(this.unit);
+  EditUpdateUnit(this.unit);
 }
 
-class UpdateFrequency extends CreateTreatmentEvent {
+class EditUpdateFrequency extends EditTreatmentEvent {
   final String frequency;
-  UpdateFrequency(this.frequency);
+  EditUpdateFrequency(this.frequency);
 }
 
-class UpdateStartTime extends CreateTreatmentEvent {
+class EditUpdateStartTime extends EditTreatmentEvent {
   final String startTime;
-  UpdateStartTime(this.startTime);
+  EditUpdateStartTime(this.startTime);
 }
 
-class AddRestriction extends CreateTreatmentEvent {
+class EditAddRestriction extends EditTreatmentEvent {
   final String restriction;
-  AddRestriction(this.restriction);
+  EditAddRestriction(this.restriction);
 }
 
-class RemoveRestriction extends CreateTreatmentEvent {
+class EditRemoveRestriction extends EditTreatmentEvent {
   final String restriction;
-  RemoveRestriction(this.restriction);
+  EditRemoveRestriction(this.restriction);
 }
 
-class SaveTreatmentRequested extends CreateTreatmentEvent {}
+class EditSaveRequested extends EditTreatmentEvent {}
 
-// States
-class CreateTreatmentState {
+class EditTreatmentState {
   final String medicineName;
   final String dose;
   final String unit;
@@ -54,7 +52,7 @@ class CreateTreatmentState {
   final bool isSuccess;
   final String? errorMessage;
 
-  CreateTreatmentState({
+  EditTreatmentState({
     this.medicineName = '',
     this.dose = '',
     this.unit = 'mg',
@@ -66,7 +64,7 @@ class CreateTreatmentState {
     this.errorMessage,
   });
 
-  CreateTreatmentState copyWith({
+  EditTreatmentState copyWith({
     String? medicineName,
     String? dose,
     String? unit,
@@ -77,7 +75,7 @@ class CreateTreatmentState {
     bool? isSuccess,
     String? errorMessage,
   }) {
-    return CreateTreatmentState(
+    return EditTreatmentState(
       medicineName: medicineName ?? this.medicineName,
       dose: dose ?? this.dose,
       unit: unit ?? this.unit,
@@ -91,37 +89,45 @@ class CreateTreatmentState {
   }
 }
 
-// Bloc
-class CreateTreatmentBloc extends Bloc<CreateTreatmentEvent, CreateTreatmentState> {
-  final CreateTreatmentUsecase _usecase;
+class EditTreatmentBloc extends Bloc<EditTreatmentEvent, EditTreatmentState> {
+  final UpdateTreatmentUsecase _usecase;
+  final String _treatmentId;
 
-  CreateTreatmentBloc(this._usecase) : super(CreateTreatmentState()) {
-    on<UpdateMedicineName>((event, emit) => emit(state.copyWith(medicineName: event.name)));
-    on<UpdateDose>((event, emit) => emit(state.copyWith(dose: event.dose)));
-    on<UpdateUnit>((event, emit) => emit(state.copyWith(unit: event.unit)));
-    on<UpdateFrequency>((event, emit) => emit(state.copyWith(frequency: event.frequency)));
-    on<UpdateStartTime>((event, emit) => emit(state.copyWith(startTime: event.startTime)));
-    
-    on<AddRestriction>((event, emit) {
+  EditTreatmentBloc(this._usecase, this._treatmentId, TreatmentModel initial)
+      : super(EditTreatmentState(
+          medicineName: initial.medicineName,
+          dose: initial.dose,
+          unit: initial.unit,
+          frequency: initial.frequency,
+          startTime: initial.startTime,
+          restrictions: List.from(initial.restrictions),
+        )) {
+    on<EditUpdateMedicineName>((event, emit) => emit(state.copyWith(medicineName: event.name)));
+    on<EditUpdateDose>((event, emit) => emit(state.copyWith(dose: event.dose)));
+    on<EditUpdateUnit>((event, emit) => emit(state.copyWith(unit: event.unit)));
+    on<EditUpdateFrequency>((event, emit) => emit(state.copyWith(frequency: event.frequency)));
+    on<EditUpdateStartTime>((event, emit) => emit(state.copyWith(startTime: event.startTime)));
+
+    on<EditAddRestriction>((event, emit) {
       if (!state.restrictions.contains(event.restriction)) {
         emit(state.copyWith(restrictions: [...state.restrictions, event.restriction]));
       }
     });
 
-    on<RemoveRestriction>((event, emit) {
+    on<EditRemoveRestriction>((event, emit) {
       emit(state.copyWith(
         restrictions: state.restrictions.where((r) => r != event.restriction).toList(),
       ));
     });
 
-    on<SaveTreatmentRequested>((event, emit) async {
+    on<EditSaveRequested>((event, emit) async {
       if (state.medicineName.isEmpty || state.dose.isEmpty || state.startTime.isEmpty) {
         emit(state.copyWith(errorMessage: 'Por favor, completa todos los campos obligatorios.'));
         return;
       }
 
       emit(state.copyWith(isLoading: true, errorMessage: null));
-      
+
       try {
         final treatment = TreatmentModel(
           medicineName: state.medicineName,
@@ -131,13 +137,13 @@ class CreateTreatmentBloc extends Bloc<CreateTreatmentEvent, CreateTreatmentStat
           startTime: state.startTime,
           restrictions: state.restrictions,
         );
-        
-        await _usecase.execute(treatment);
+
+        await _usecase.execute(_treatmentId, treatment);
         emit(state.copyWith(isLoading: false, isSuccess: true));
       } catch (e) {
         emit(state.copyWith(
           isLoading: false,
-          errorMessage: 'Error al guardar: ${e.toString()}',
+          errorMessage: 'No se pudo actualizar el tratamiento: ${e.toString()}',
         ));
       }
     });
