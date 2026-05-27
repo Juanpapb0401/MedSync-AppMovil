@@ -39,10 +39,10 @@ class TreatmentsListErrorState extends TreatmentsListState {
 }
 
 class TreatmentsListBloc extends Bloc<TreatmentsListEvent, TreatmentsListState> {
-  final GetTreatmentsUsecase _treatmentsUsecase = GetTreatmentsUsecase();
-  final DeleteTreatmentUsecase _deleteUsecase = DeleteTreatmentUsecase();
+  final GetTreatmentsUsecase _treatmentsUsecase;
+  final DeleteTreatmentUsecase _deleteUsecase;
 
-  TreatmentsListBloc() : super(TreatmentsListInitialState()) {
+  TreatmentsListBloc(this._treatmentsUsecase, this._deleteUsecase) : super(TreatmentsListInitialState()) {
     on<LoadTreatmentsEvent>((event, emit) async {
       emit(TreatmentsListLoadingState());
       try {

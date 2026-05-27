@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/app_colors.dart';
 import '../../../../components/medsync_back_button.dart';
 import '../../../../components/medsync_button.dart';
@@ -26,7 +27,7 @@ class EditTreatmentScreen extends StatefulWidget {
 }
 
 class _EditTreatmentScreenState extends State<EditTreatmentScreen> {
-  final _usecase = UpdateTreatmentUsecase();
+  final _usecase = sl<UpdateTreatmentUsecase>();
   late TextEditingController _medicineController;
   late TextEditingController _doseController;
   late String _selectedUnit;

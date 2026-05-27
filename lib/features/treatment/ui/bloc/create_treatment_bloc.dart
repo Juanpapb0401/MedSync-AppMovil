@@ -93,9 +93,10 @@ class CreateTreatmentState {
 
 // Bloc
 class CreateTreatmentBloc extends Bloc<CreateTreatmentEvent, CreateTreatmentState> {
-  final _repo = TreatmentRepoImpl();
+  // TODO: Inyectar un usecase específico en vez de usar directamente el repo
+  final TreatmentRepoImpl _repo;
 
-  CreateTreatmentBloc() : super(CreateTreatmentState()) {
+  CreateTreatmentBloc(this._repo) : super(CreateTreatmentState()) {
     on<UpdateMedicineName>((event, emit) => emit(state.copyWith(medicineName: event.name)));
     on<UpdateDose>((event, emit) => emit(state.copyWith(dose: event.dose)));
     on<UpdateUnit>((event, emit) => emit(state.copyWith(unit: event.unit)));

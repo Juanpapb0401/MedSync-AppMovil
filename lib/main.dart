@@ -38,6 +38,7 @@ void main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
+  // Initialize dependencies before running the app (dependency injection setup)
   await initDependencies();
 
   final prefs = await SharedPreferences.getInstance();

@@ -5,7 +5,9 @@ import '../../domain/repo/treatment_repo.dart';
 import '../sources/treatment_data_source.dart';
 
 class TreatmentRepoImpl implements TreatmentRepo {
-  final _source = TreatmentDataSource();
+  final TreatmentDataSource _source;
+
+  TreatmentRepoImpl(this._source);
 
   @override
   Future<TreatmentSummaryModel> getTreatmentSummary() =>

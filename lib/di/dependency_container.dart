@@ -75,6 +75,19 @@ import 'package:medsync/features/rutina/domain/usecases/update_intake_status_use
 import 'package:medsync/features/rutina/ui/bloc/rutina_bloc.dart';
 
 // ========================== Treatment ==========================
+// -------------------------- data --------------------------
+import 'package:medsync/features/treatment/data/repo/treatment_repo_impl.dart';
+import 'package:medsync/features/treatment/data/sources/treatment_data_source.dart';
+// -------------------------- domain --------------------------
+import 'package:medsync/features/treatment/domain/repo/treatment_repo.dart';
+import 'package:medsync/features/treatment/domain/usecases/delete_treatment_usecase.dart';
+import 'package:medsync/features/treatment/domain/usecases/get_treatment_summary_usecase.dart';
+import 'package:medsync/features/treatment/domain/usecases/get_treatments_usecase.dart';
+import 'package:medsync/features/treatment/domain/usecases/update_treatment_usecase.dart';
+// -------------------------- bloc --------------------------
+import 'package:medsync/features/treatment/ui/bloc/create_treatment_bloc.dart';
+import 'package:medsync/features/treatment/ui/bloc/treatment_summary_bloc.dart';
+import 'package:medsync/features/treatment/ui/bloc/treatments_list_bloc.dart';
 
 Future<void> initDependencies() async {
     // ========================== Auth ==========================
@@ -123,5 +136,16 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton(() => GetDailyRutinaUsecase(sl()));
     sl.registerLazySingleton(() => UpdateIntakeStatusUsecase(sl()));
     sl.registerFactory<RutinaBloc>(() => RutinaBloc(sl(), sl(), sl()));
+
+    // ========================== Treatment ==========================
+    sl.registerLazySingleton<TreatmentRepo>(() => TreatmentRepoImpl(sl()));
+    sl.registerLazySingleton<TreatmentDataSource>(() => TreatmentDataSource());
+    sl.registerLazySingleton(() => DeleteTreatmentUsecase(sl()));
+    sl.registerLazySingleton(() => GetTreatmentSummaryUsecase(sl()));
+    sl.registerLazySingleton(() => GetTreatmentsUsecase(sl()));
+    sl.registerLazySingleton(() => UpdateTreatmentUsecase(sl()));
+    sl.registerFactory<CreateTreatmentBloc>(() => CreateTreatmentBloc(sl()));
+    sl.registerFactory<TreatmentSummaryBloc>(() => TreatmentSummaryBloc(sl()));
+    sl.registerFactory<TreatmentsListBloc>(() => TreatmentsListBloc(sl(), sl()));
 
 }
