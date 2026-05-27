@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:medsync/di/dependency_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/ui/screens/login_screen.dart';
@@ -31,10 +32,14 @@ import 'presentation/screens/components_preview_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
+
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
+
+  // Initialize dependencies before running the app (dependency injection setup)
+  await initDependencies();
 
   final prefs = await SharedPreferences.getInstance();
   if (kDebugMode) await prefs.remove('onboarding_done');

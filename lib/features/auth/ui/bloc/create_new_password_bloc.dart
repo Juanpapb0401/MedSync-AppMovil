@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/repo/forgot_password_repo.dart';
 import '../../domain/usecases/update_password_usecase.dart';
-import '../../data/repo/forgot_password_repo_impl.dart';
 
 abstract class CreateNewPasswordEvent {}
 
@@ -29,9 +27,7 @@ class CreateNewPasswordBloc
     extends Bloc<CreateNewPasswordEvent, CreateNewPasswordState> {
   late final UpdatePasswordUsecase _usecase;
 
-  CreateNewPasswordBloc()
-      : super(CreateNewPasswordInitial()) {
-    _usecase = UpdatePasswordUsecase(ForgotPasswordRepoImpl());
+  CreateNewPasswordBloc(this._usecase) : super(CreateNewPasswordInitial()) {
     on<CreateNewPasswordRequested>((event, emit) async {
       emit(CreateNewPasswordLoading());
       try {

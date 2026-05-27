@@ -25,9 +25,9 @@ class LinkPatientFailState extends LinkPatientState {
 }
 
 class LinkPatientBloc extends Bloc<LinkPatientEvent, LinkPatientState> {
-  final LinkPatientUsecase _usecase = LinkPatientUsecase();
+  final LinkPatientUsecase _usecase;
 
-  LinkPatientBloc() : super(LinkPatientInitialState()) {
+  LinkPatientBloc(this._usecase) : super(LinkPatientInitialState()) {
     on<SubmitLinkPatientEvent>((event, emit) async {
       emit(LinkPatientLoadingState());
       try {

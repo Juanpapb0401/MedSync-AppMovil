@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/app_colors.dart';
 import '../../../../components/main_nav_bar.dart';
 import '../../domain/model/rutina_medicamento_model.dart';
@@ -12,7 +14,7 @@ class RutinaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => RutinaBloc()..add(LoadRutinaEvent(DateTime.now())),
+      create: (context) => sl<RutinaBloc>()..add(LoadRutinaEvent(DateTime.now())),
       child: const _RutinaScreenContent(),
     );
   }

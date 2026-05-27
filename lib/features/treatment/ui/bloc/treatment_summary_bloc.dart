@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/model/treatment_summary_model.dart';
 import '../../domain/usecases/get_treatment_summary_usecase.dart';
-import '../../data/repo/treatment_repo_impl.dart';
 
 // Events
 abstract class TreatmentSummaryEvent {}
@@ -28,11 +27,9 @@ class TreatmentSummaryErrorState extends TreatmentSummaryState {
 // BLoC
 class TreatmentSummaryBloc
     extends Bloc<TreatmentSummaryEvent, TreatmentSummaryState> {
-  final GetTreatmentSummaryUsecase _usecase = GetTreatmentSummaryUsecase(
-    TreatmentRepoImpl(),
-  );
+  final GetTreatmentSummaryUsecase _usecase;
 
-  TreatmentSummaryBloc() : super(TreatmentSummaryInitialState()) {
+  TreatmentSummaryBloc(this._usecase) : super(TreatmentSummaryInitialState()) {
     on<LoadTreatmentSummaryEvent>((event, emit) async {
       emit(TreatmentSummaryLoadingState());
       try {

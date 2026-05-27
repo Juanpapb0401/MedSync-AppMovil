@@ -4,7 +4,9 @@ import '../../domain/repo/auth_repo.dart';
 import '../sources/auth_data_source.dart';
 
 class AuthRepoImpl extends AuthRepo {
-  final AuthDataSource _source = AuthDataSource();
+  final AuthDataSource _source;
+
+  AuthRepoImpl(this._source);
 
   @override
   Future<ProfileModel> login(String email, String password) {

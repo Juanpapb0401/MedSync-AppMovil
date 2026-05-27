@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/get_linking_code_usecase.dart';
-import '../../data/repo/get_linking_code_repo_impl.dart';
 
 abstract class CodeBindingEvent {}
 
@@ -27,9 +26,7 @@ class CodeBindingErrorState extends CodeBindingState {
 class CodeBindingBloc extends Bloc<CodeBindingEvent, CodeBindingState> {
   late final GetLinkingCodeUsecase _usecase;
 
-  CodeBindingBloc() 
-      : super(CodeBindingInitialState()) {
-    _usecase = GetLinkingCodeUsecase(GetLinkingCodeRepoImpl());
+  CodeBindingBloc(this._usecase) : super(CodeBindingInitialState()) {
     on<LoadCodeBindingEvent>((event, emit) async {
       emit(CodeBindingLoadingState());
       try {

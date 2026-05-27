@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/components.dart';
 import '../bloc/create_new_password_bloc.dart';
 
@@ -57,7 +58,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => CreateNewPasswordBloc(),
+      create: (_) => sl<CreateNewPasswordBloc>(),
       child: BlocConsumer<CreateNewPasswordBloc, CreateNewPasswordState>(
         listener: (context, state) {
           if (state is CreateNewPasswordSuccess) {

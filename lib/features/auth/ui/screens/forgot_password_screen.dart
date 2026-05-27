@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/components.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/forgot_password_bloc.dart';
@@ -18,7 +20,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ForgotPasswordBloc(),
+      create: (_) => sl<ForgotPasswordBloc>(),
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (context, state) {
           if (state is ForgotPasswordSuccess) {
