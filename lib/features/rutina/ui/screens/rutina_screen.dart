@@ -5,8 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:medsync/di/service_locator.dart';
 import '../../../../components/app_colors.dart';
 import '../../../../components/main_nav_bar.dart';
+import '../../../../components/notification_center_modal.dart';
 import '../../domain/model/rutina_medicamento_model.dart';
 import '../bloc/rutina_bloc.dart';
+import '../bloc/notification_center_cubit.dart';
 
 class RutinaScreen extends StatelessWidget {
   const RutinaScreen({super.key});
@@ -44,25 +46,71 @@ class _RutinaScreenContent extends StatelessWidget {
                   color: Colors.white,
                   width: double.infinity,
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Mi Rutina',
-                        style: GoogleFonts.poppins(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF1A1A1A),
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Mi Rutina',
+                            style: GoogleFonts.poppins(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w800,
+                              color: const Color(0xFF1A1A1A),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${_getGreeting()}, ${state is RutinaLoadedState ? state.patientName : 'Paciente'}',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFF6B7280),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${_getGreeting()}, ${state is RutinaLoadedState ? state.patientName : 'Paciente'}',
-                        style: GoogleFonts.poppins(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF6B7280),
-                        ),
+                      BlocBuilder<NotificationCenterCubit, NotificationCenterState>(
+                        builder: (context, notifState) {
+                          final count = notifState.notifications.length;
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.notifications_outlined, color: Color(0xFF6B7280)),
+                                  onPressed: () => NotificationCenterModal.show(context),
+                                ),
+                              ),
+                              if (count > 0)
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.dangerBg,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Text(
+                                      count.toString(),
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.dangerText,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
