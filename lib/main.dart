@@ -27,7 +27,12 @@ import 'features/auth/ui/screens/patient_register_screen.dart';
 import 'features/auth/ui/screens/role_selection_screen.dart';
 import 'features/treatment/domain/model/treatment_model.dart';
 import 'features/treatment/ui/screens/edit_treatment_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'presentation/screens/components_preview_screen.dart';
+import 'package:medsync/features/rutina/domain/services/in_app_notification_service.dart';
+import 'package:medsync/features/rutina/ui/bloc/notification_center_cubit.dart';
+import 'package:medsync/di/service_locator.dart';
+import 'components/global_notification_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +45,9 @@ void main() async {
 
   // Initialize dependencies before running the app (dependency injection setup)
   await initDependencies();
+  
+  // Start the background notification service
+  sl<InAppNotificationService>().start();
 
   final prefs = await SharedPreferences.getInstance();
   if (kDebugMode) await prefs.remove('onboarding_done');
@@ -57,10 +65,13 @@ class MedSyncApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MedSync',
-      debugShowCheckedModeBanner: false,
-      initialRoute: initialRoute,
+    return BlocProvider(
+      create: (_) => sl<NotificationCenterCubit>(),
+      child: MaterialApp(
+        builder: (context, child) => GlobalNotificationWrapper(child: child!),
+        title: 'MedSync',
+        debugShowCheckedModeBanner: false,
+        initialRoute: initialRoute,
       routes: {
         '/onboarding': (_) => const OnboardingScreen(),
         '/auth/login': (_) => const LoginScreen(),
@@ -128,6 +139,7 @@ class MedSyncApp extends StatelessWidget {
         '/profile/patient': (_) => const PatientProfileScreen(),
         '/dev': (_) => const ComponentsPreviewScreen(),
       },
+    ),
     );
   }
 }
