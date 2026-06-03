@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/model/rutina_medicamento_model.dart';
 import '../../domain/usecases/get_daily_rutina_usecase.dart';
+import '../../domain/usecases/remind_later_usecase.dart';
 import '../../domain/usecases/update_intake_status_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_usecase.dart';
 
@@ -20,6 +21,16 @@ class UpdateStatusEvent extends RutinaEvent {
   UpdateStatusEvent({
     required this.notificationId,
     required this.newStatus,
+    required this.date,
+  });
+}
+
+class RemindLaterEvent extends RutinaEvent {
+  final String notificationId;
+  final DateTime date;
+
+  RemindLaterEvent({
+    required this.notificationId,
     required this.date,
   });
 }
@@ -52,11 +63,13 @@ class RutinaErrorState extends RutinaState {
 class RutinaBloc extends Bloc<RutinaEvent, RutinaState> {
   final GetDailyRutinaUsecase _getDailyRutinaUsecase;
   final UpdateIntakeStatusUsecase _updateIntakeStatusUsecase;
+  final RemindLaterUsecase _remindLaterUsecase;
   final GetProfileUsecase _getProfileUsecase;
 
   RutinaBloc(
     this._getDailyRutinaUsecase,
     this._updateIntakeStatusUsecase,
+    this._remindLaterUsecase,
     this._getProfileUsecase,
   ) : super(RutinaInitialState()) {
     on<LoadRutinaEvent>((event, emit) async {
@@ -113,6 +126,36 @@ class RutinaBloc extends Bloc<RutinaEvent, RutinaState> {
       } catch (_) {
         emit(
           RutinaErrorState('No se pudo actualizar el estado del medicamento.'),
+        );
+      }
+    });
+
+    on<RemindLaterEvent>((event, emit) async {
+      try {
+        final newStatus = await _remindLaterUsecase.execute(
+          event.notificationId,
+        );
+
+        if (newStatus == 'sin_confirmar') {
+          final profile = await _getProfileUsecase.execute();
+          final patientName = profile.fullName;
+          final routine = await _getDailyRutinaUsecase.execute(event.date);
+
+          routine.sort(
+            (a, b) => a.scheduledDateTime.compareTo(b.scheduledDateTime),
+          );
+
+          emit(
+            RutinaLoadedState(
+              patientName: patientName,
+              routine: routine,
+              currentDate: event.date,
+            ),
+          );
+        }
+      } catch (_) {
+        emit(
+          RutinaErrorState('No se pudo procesar el recordatorio.'),
         );
       }
     });

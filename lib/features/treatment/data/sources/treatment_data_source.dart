@@ -95,13 +95,17 @@ class TreatmentDataSource {
     if (treatment.frequency.contains('12')) intervalHours = 12;
     if (treatment.frequency.contains('24')) intervalHours = 24;
 
-    await _client.from('schedule').insert({
+    final startTime = _normalizeStartTime(treatment.startTime);
+
+    final scheduleResult = await _client.from('schedule').insert({
       'frequency_type': 'intervalo',
       'interval_hours': intervalHours,
-      if (_normalizeStartTime(treatment.startTime) != null)
-        'time': _normalizeStartTime(treatment.startTime),
+      if (startTime != null) 'time': startTime,
       'treatment_id': treatmentId,
-    });
+    }).select('id').single();
+
+    final scheduleId = scheduleResult['id'] as String;
+    await _generateNotificationsForSchedule(scheduleId, intervalHours, startTime);
 
     // 5. Insert Restrictions
     if (treatment.restrictions.isNotEmpty) {
@@ -162,6 +166,12 @@ class TreatmentDataSource {
     final intervalHours = _resolveIntervalHours(treatment.frequency);
     final normalizedTime = _normalizeStartTime(treatment.startTime);
 
+    final existingSchedule = await _client
+        .from('schedule')
+        .select('id')
+        .eq('treatment_id', treatmentId)
+        .maybeSingle();
+
     final scheduleUpdate = <String, dynamic>{
       'frequency_type': 'intervalo',
       'interval_hours': intervalHours,
@@ -174,6 +184,16 @@ class TreatmentDataSource {
         .from('schedule')
         .update(scheduleUpdate)
         .eq('treatment_id', treatmentId);
+
+    if (existingSchedule != null) {
+      final scheduleId = existingSchedule['id'] as String;
+      await _client
+          .from('notification')
+          .delete()
+          .eq('schedule_id', scheduleId)
+          .gte('scheduled_datetime', DateTime.now().toUtc().toIso8601String());
+      await _generateNotificationsForSchedule(scheduleId, intervalHours, normalizedTime);
+    }
 
     await _client.from('restriction').delete().eq('treatment_id', treatmentId);
 
@@ -313,6 +333,50 @@ class TreatmentDataSource {
     if (meridiem == 'AM' && hour == 12) hour = 0;
 
     return '${hour.toString().padLeft(2, '0')}:$minute:00';
+  }
+
+  Future<void> _generateNotificationsForSchedule(
+    String scheduleId,
+    int intervalHours,
+    String? startTime,
+  ) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    const daysToGenerate = 60;
+
+    int baseHour;
+    int baseMinute;
+    if (startTime != null && startTime.length >= 5) {
+      final parts = startTime.split(':');
+      baseHour = int.parse(parts[0]);
+      baseMinute = int.parse(parts[1]);
+    } else {
+      baseHour = 8;
+      baseMinute = 0;
+    }
+
+    final List<Map<String, dynamic>> notifications = [];
+
+    for (int day = 0; day < daysToGenerate; day++) {
+      for (int hourOffset = 0; hourOffset < 24; hourOffset += intervalHours) {
+        final scheduledAt = today
+            .add(Duration(days: day))
+            .add(Duration(hours: baseHour + hourOffset, minutes: baseMinute));
+
+        if (scheduledAt.isBefore(now)) continue;
+
+        notifications.add({
+          'schedule_id': scheduleId,
+          'scheduled_datetime': scheduledAt.toUtc().toIso8601String(),
+          'original_scheduled_datetime': scheduledAt.toUtc().toIso8601String(),
+          'status': 'pendiente',
+        });
+      }
+    }
+
+    if (notifications.isNotEmpty) {
+      await _client.from('notification').insert(notifications);
+    }
   }
 
   Future<void> deleteTreatment(String treatmentId) async {
