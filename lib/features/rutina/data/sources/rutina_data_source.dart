@@ -3,6 +3,7 @@ import '../../domain/model/rutina_medicamento_model.dart';
 
 class RutinaDataSource {
   final _client = Supabase.instance.client;
+  final Map<String, int> _reminderCounts = {};
 
   Future<List<RutinaMedicamentoModel>> getDailyRutina(DateTime date) async {
     final authUser = _client.auth.currentSession?.user;
@@ -77,10 +78,26 @@ class RutinaDataSource {
   }
 
   Future<void> updateIntakeStatus(String notificationId, String newStatus) async {
+    _reminderCounts.remove(notificationId);
     await _client
         .from('notification')
         .update({'status': newStatus})
         .eq('id', notificationId);
+  }
+
+  Future<String> remindLater(String notificationId) async {
+    final count = (_reminderCounts[notificationId] ?? 0) + 1;
+    _reminderCounts[notificationId] = count;
+
+    if (count >= 2) {
+      await _client
+          .from('notification')
+          .update({'status': 'sin_confirmar'})
+          .eq('id', notificationId);
+      return 'sin_confirmar';
+    }
+
+    return 'pendiente';
   }
 
   String _formatDose(dynamic dose) {

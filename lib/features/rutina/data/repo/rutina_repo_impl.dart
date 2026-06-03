@@ -16,4 +16,9 @@ class RutinaRepoImpl implements RutinaRepo {
   Future<void> updateIntakeStatus(String notificationId, String newStatus) {
     return _dataSource.updateIntakeStatus(notificationId, newStatus);
   }
+
+  @override
+  Future<String> remindLater(String notificationId) {
+    return _dataSource.remindLater(notificationId);
+  }
 }

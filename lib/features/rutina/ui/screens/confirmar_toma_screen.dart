@@ -326,7 +326,7 @@ class _ConfirmarTomaScreenState extends State<ConfirmarTomaScreen>
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Si no confirmas, te recordaremos en 2 minutos',
+                    'Después de 2 recordatorios, tu cuidador será notificado',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 12,

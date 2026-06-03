@@ -352,6 +352,11 @@ class _MedicationCard extends StatelessWidget {
                 newStatus: 'tomado',
                 date: currentDate,
               ));
+            } else if (result == 'recordar') {
+              bloc.add(RemindLaterEvent(
+                notificationId: intake.notificationId,
+                date: currentDate,
+              ));
             }
           });
         } else {
