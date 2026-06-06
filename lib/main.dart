@@ -58,6 +58,8 @@ void main() async {
   );
 }
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MedSyncApp extends StatelessWidget {
   final String initialRoute;
 
@@ -68,7 +70,11 @@ class MedSyncApp extends StatelessWidget {
     return BlocProvider(
       create: (_) => sl<NotificationCenterCubit>(),
       child: MaterialApp(
-        builder: (context, child) => GlobalNotificationWrapper(child: child!),
+        navigatorKey: navigatorKey,
+        builder: (context, child) => GlobalNotificationWrapper(
+          navigatorKey: navigatorKey,
+          child: child!,
+        ),
         title: 'MedSync',
         debugShowCheckedModeBanner: false,
         initialRoute: initialRoute,

@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medsync/di/service_locator.dart';
+import 'package:medsync/features/rutina/domain/services/in_app_notification_service.dart';
 import '../../domain/model/rutina_medicamento_model.dart';
 import '../../domain/usecases/get_daily_rutina_usecase.dart';
 import '../../domain/usecases/remind_later_usecase.dart';
@@ -107,6 +109,9 @@ class RutinaBloc extends Bloc<RutinaEvent, RutinaState> {
           event.newStatus,
         );
 
+        // Clear local alarm timer
+        sl<InAppNotificationService>().clearAlarm(event.notificationId);
+
         // Re-load the routine data
         final profile = await _getProfileUsecase.execute();
         final patientName = profile.fullName;
@@ -132,27 +137,29 @@ class RutinaBloc extends Bloc<RutinaEvent, RutinaState> {
 
     on<RemindLaterEvent>((event, emit) async {
       try {
-        final newStatus = await _remindLaterUsecase.execute(
+        await _remindLaterUsecase.execute(
           event.notificationId,
         );
 
-        if (newStatus == 'sin_confirmar') {
-          final profile = await _getProfileUsecase.execute();
-          final patientName = profile.fullName;
-          final routine = await _getDailyRutinaUsecase.execute(event.date);
+        // Snooze local alarm timer
+        sl<InAppNotificationService>().snooze(event.notificationId);
 
-          routine.sort(
-            (a, b) => a.scheduledDateTime.compareTo(b.scheduledDateTime),
-          );
+        // Load routine data (we reload regardless of status to keep DB and UI in sync)
+        final profile = await _getProfileUsecase.execute();
+        final patientName = profile.fullName;
+        final routine = await _getDailyRutinaUsecase.execute(event.date);
 
-          emit(
-            RutinaLoadedState(
-              patientName: patientName,
-              routine: routine,
-              currentDate: event.date,
-            ),
-          );
-        }
+        routine.sort(
+          (a, b) => a.scheduledDateTime.compareTo(b.scheduledDateTime),
+        );
+
+        emit(
+          RutinaLoadedState(
+            patientName: patientName,
+            routine: routine,
+            currentDate: event.date,
+          ),
+        );
       } catch (_) {
         emit(
           RutinaErrorState('No se pudo procesar el recordatorio.'),
