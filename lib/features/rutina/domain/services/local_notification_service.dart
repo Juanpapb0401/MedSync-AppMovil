@@ -7,12 +7,18 @@ import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../model/rutina_medicamento_model.dart';
+import '../usecases/get_daily_rutina_usecase.dart';
 import '../usecases/watch_today_rutina_usecase.dart';
 
 const _advanceChannelId = 'medsync_advance_notice';
 const _alarmChannelId = 'medsync_alarm';
 
 class LocalNotificationService {
+  final WatchTodayRutinaUsecase _watchUsecase;
+  final GetDailyRutinaUsecase _getDailyUsecase;
+
+  LocalNotificationService(this._watchUsecase, this._getDailyUsecase);
+
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
@@ -48,15 +54,28 @@ class LocalNotificationService {
             AndroidFlutterLocalNotificationsPlugin>();
     await androidPlugin?.requestNotificationsPermission();
     await androidPlugin?.requestExactAlarmsPermission();
+
+    final iosPlugin =
+        _plugin.resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>();
+    await iosPlugin?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
   /// Subscribes to the rutina stream and reschedules OS notifications on
   /// every emission (after confirm, snooze, or lazy daily generation).
-  void start(WatchTodayRutinaUsecase usecase) {
+  /// Also primes today's rutina so notifications get scheduled even if the
+  /// patient never opens the "Mi Rutina" screen.
+  void start() {
     _subscription?.cancel();
-    _subscription = usecase.execute().listen(
+    _subscription = _watchUsecase.execute().listen(
       _reschedule,
       onError: (_) {},
+    );
+
+    // Fire-and-forget: forces creation of today's notification rows and pushes
+    // them to the stream, triggering the initial OS scheduling above.
+    _getDailyUsecase.execute(DateTime.now()).catchError(
+      (_) => <RutinaMedicamentoModel>[],
     );
   }
 

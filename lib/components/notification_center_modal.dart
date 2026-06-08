@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:medsync/features/rutina/ui/bloc/notification_center_cubit.dart';
+import 'package:medsync/features/rutina/ui/bloc/notification_center_bloc.dart';
 import 'package:medsync/features/rutina/domain/model/rutina_medicamento_model.dart';
 import 'package:medsync/components/app_colors.dart';
 
@@ -17,7 +17,7 @@ class NotificationCenterModal extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => BlocProvider.value(
-        value: context.read<NotificationCenterCubit>(),
+        value: context.read<NotificationCenterBloc>(),
         child: const NotificationCenterModal(),
       ),
     );
@@ -33,7 +33,7 @@ class NotificationCenterModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NotificationCenterCubit, NotificationCenterState>(
+    return BlocBuilder<NotificationCenterBloc, NotificationCenterState>(
       builder: (context, state) {
         final notifications = state.notifications;
         
@@ -75,7 +75,7 @@ class NotificationCenterModal extends StatelessWidget {
                     if (notifications.isNotEmpty)
                       TextButton(
                         onPressed: () {
-                          context.read<NotificationCenterCubit>().clearAll();
+                          context.read<NotificationCenterBloc>().add(ClearAllNotifications());
                         },
                         style: TextButton.styleFrom(
                           foregroundColor: AppColors.dangerText,
@@ -150,7 +150,9 @@ class NotificationCenterModal extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '¡Faltan 5 minutos para tu toma!',
+                DateTime.now().isBefore(intake.scheduledDateTime)
+                    ? '¡Faltan 5 minutos para tu toma!'
+                    : '¡Es hora de tomar tu medicamento!',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -171,7 +173,7 @@ class NotificationCenterModal extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.close_rounded, color: Color(0xFF9CA3AF), size: 20),
           onPressed: () {
-            context.read<NotificationCenterCubit>().removeNotification(intake.notificationId);
+            context.read<NotificationCenterBloc>().add(RemoveNotification(intake.notificationId));
           },
         ),
       ],

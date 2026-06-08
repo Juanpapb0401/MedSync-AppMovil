@@ -52,6 +52,9 @@ class _GlobalNotificationWrapperState extends State<GlobalNotificationWrapper> {
 
   void _onNotificationFired(RutinaMedicamentoModel intake) {
     if (!mounted) return;
+    // Only show the advance-notice snackbar when the alarm is still in the
+    // future. If scheduled time has already passed, the AlarmDialog handles it.
+    if (!DateTime.now().isBefore(intake.scheduledDateTime)) return;
 
     final formattedTime = _formatTime(intake.scheduledDateTime);
     final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);

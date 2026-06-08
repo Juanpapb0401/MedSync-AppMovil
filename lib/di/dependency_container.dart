@@ -31,6 +31,7 @@ import 'package:medsync/features/auth/ui/bloc/code_binding_bloc.dart';
 import 'package:medsync/features/auth/ui/bloc/create_new_password_bloc.dart';
 import 'package:medsync/features/auth/ui/bloc/forgot_password_bloc.dart';
 import 'package:medsync/features/auth/ui/bloc/login_bloc.dart';
+import 'package:medsync/features/auth/ui/bloc/logout_bloc.dart';
 import 'package:medsync/features/auth/ui/bloc/otp_verification_bloc.dart';
 import 'package:medsync/features/auth/ui/bloc/patient_register_bloc.dart';
 
@@ -93,7 +94,7 @@ import 'package:medsync/features/treatment/domain/usecases/update_treatment_usec
 import 'package:medsync/features/treatment/ui/bloc/create_treatment_bloc.dart';
 import 'package:medsync/features/treatment/ui/bloc/treatment_summary_bloc.dart';
 import 'package:medsync/features/treatment/ui/bloc/treatments_list_bloc.dart';
-import 'package:medsync/features/rutina/ui/bloc/notification_center_cubit.dart';
+import 'package:medsync/features/rutina/ui/bloc/notification_center_bloc.dart';
 
 Future<void> initDependencies() async {
     // ========================== Auth ==========================
@@ -113,6 +114,7 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton(() => SendResetEmailUsecase(sl()));
     sl.registerLazySingleton(() => UpdatePasswordUsecase(sl()));
     sl.registerLazySingleton(() => VerifyOtpUsecase(sl()));
+    sl.registerFactory<LogoutBloc>(() => LogoutBloc(sl(), sl(), sl()));
     sl.registerFactory<CaregiverRegisterBloc>(() => CaregiverRegisterBloc(sl()));
     sl.registerFactory<CodeBindingBloc>(() => CodeBindingBloc(sl()));
     sl.registerFactory<CreateNewPasswordBloc>(() => CreateNewPasswordBloc(sl()));
@@ -143,9 +145,9 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton(() => UpdateIntakeStatusUsecase(sl()));
     sl.registerLazySingleton(() => RemindLaterUsecase(sl()));
     sl.registerLazySingleton(() => WatchTodayRutinaUsecase(sl()));
-    sl.registerLazySingleton(() => LocalNotificationService());
+    sl.registerLazySingleton(() => LocalNotificationService(sl(), sl()));
     sl.registerLazySingleton(() => InAppNotificationService(sl(), sl()));
-    sl.registerLazySingleton(() => NotificationCenterCubit(sl()));
+    sl.registerLazySingleton(() => NotificationCenterBloc(sl()));
     sl.registerFactory<RutinaBloc>(() => RutinaBloc(sl(), sl(), sl(), sl()));
 
     // ========================== Treatment ==========================

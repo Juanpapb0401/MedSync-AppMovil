@@ -29,9 +29,8 @@ import 'features/treatment/domain/model/treatment_model.dart';
 import 'features/treatment/ui/screens/edit_treatment_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'presentation/screens/components_preview_screen.dart';
-import 'package:medsync/features/rutina/domain/services/in_app_notification_service.dart';
 import 'package:medsync/features/rutina/domain/services/local_notification_service.dart';
-import 'package:medsync/features/rutina/ui/bloc/notification_center_cubit.dart';
+import 'package:medsync/features/rutina/ui/bloc/notification_center_bloc.dart';
 import 'package:medsync/di/service_locator.dart';
 import 'components/global_notification_wrapper.dart';
 
@@ -48,10 +47,11 @@ void main() async {
   await initDependencies();
 
   // Initialize OS notification service (must happen before runApp so that
-  // notification taps while the app is closed are handled correctly)
+  // notification taps while the app is closed are handled correctly).
+  // The scheduling/firing services (start()) are NOT launched here: they are
+  // started only for a logged-in patient (see LoginScreen) and stopped on
+  // logout, so caregivers never receive medication alarms.
   await sl<LocalNotificationService>().init(navigatorKey);
-  sl<LocalNotificationService>().start(sl());
-  sl<InAppNotificationService>().start();
 
   final prefs = await SharedPreferences.getInstance();
   if (kDebugMode) await prefs.remove('onboarding_done');
@@ -72,7 +72,7 @@ class MedSyncApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<NotificationCenterCubit>(),
+      create: (_) => sl<NotificationCenterBloc>(),
       child: MaterialApp(
         navigatorKey: navigatorKey,
         builder: (context, child) => GlobalNotificationWrapper(

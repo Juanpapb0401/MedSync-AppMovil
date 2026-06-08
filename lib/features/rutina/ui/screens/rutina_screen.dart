@@ -8,7 +8,7 @@ import '../../../../components/main_nav_bar.dart';
 import '../../../../components/notification_center_modal.dart';
 import '../../domain/model/rutina_medicamento_model.dart';
 import '../bloc/rutina_bloc.dart';
-import '../bloc/notification_center_cubit.dart';
+import '../bloc/notification_center_bloc.dart';
 
 class RutinaScreen extends StatelessWidget {
   const RutinaScreen({super.key});
@@ -71,7 +71,7 @@ class _RutinaScreenContent extends StatelessWidget {
                           ),
                         ],
                       ),
-                      BlocBuilder<NotificationCenterCubit, NotificationCenterState>(
+                      BlocBuilder<NotificationCenterBloc, NotificationCenterState>(
                         builder: (context, notifState) {
                           final count = notifState.notifications.length;
                           return Stack(

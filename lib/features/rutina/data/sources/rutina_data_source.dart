@@ -37,7 +37,9 @@ class RutinaDataSource {
     String notificationId,
     String newStatus,
   ) async {
-    final now = DateTime.now().toUtc();
+    // Local wall-clock throughout: the column is `timestamp without time zone`
+    // and is read back as local, so we must never shift to UTC when writing.
+    final now = DateTime.now();
 
     final notifData = await _client
         .from('notification')
@@ -82,11 +84,8 @@ class RutinaDataSource {
 
     if (nextNotif != null) {
       final newScheduledAt = baseTime.add(Duration(hours: intervalHours));
-      final localNow = now.toLocal();
-      final endOfToday =
-          DateTime(localNow.year, localNow.month, localNow.day)
-              .toUtc()
-              .add(const Duration(days: 1));
+      final endOfToday = DateTime(now.year, now.month, now.day)
+          .add(const Duration(days: 1));
       if (newScheduledAt.isBefore(endOfToday)) {
         await _client
             .from('notification')
@@ -111,6 +110,10 @@ class RutinaDataSource {
     if (newCount >= 2) {
       updateData['status'] = 'sin_confirmar';
     }
+    // Move scheduled_datetime forward so _reschedule() sees a future time and
+    // schedules an OS notification that fires even when the app is backgrounded.
+    updateData['scheduled_datetime'] =
+        DateTime.now().add(const Duration(minutes: 2)).toIso8601String();
 
     await _client
         .from('notification')
@@ -180,7 +183,7 @@ class RutinaDataSource {
     List<String> scheduleIds,
     DateTime date,
   ) async {
-    final startOfDay = DateTime(date.year, date.month, date.day).toUtc();
+    final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     final resp = await _client
@@ -208,8 +211,8 @@ class RutinaDataSource {
         restrictionsRaw?.map((item) => item['description'] as String).toList() ??
             <String>[];
 
-    final scheduledAt =
-        DateTime.parse(r['scheduled_datetime'] as String).toLocal();
+    // Naive string (no offset) → parsed as local, which matches how it was stored.
+    final scheduledAt = DateTime.parse(r['scheduled_datetime'] as String);
 
     return RutinaMedicamentoModel(
       notificationId: r['id'] as String,
@@ -226,7 +229,7 @@ class RutinaDataSource {
     List<Map<String, dynamic>> schedules,
     DateTime date,
   ) async {
-    final startOfDay = DateTime(date.year, date.month, date.day).toUtc();
+    final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     for (final schedule in schedules) {
@@ -265,9 +268,9 @@ class RutinaDataSource {
           final hour = int.parse(parts[0]);
           final minute = int.parse(parts[1]);
           baseTime =
-              DateTime(date.year, date.month, date.day, hour, minute).toUtc();
+              DateTime(date.year, date.month, date.day, hour, minute);
         } else {
-          baseTime = DateTime(date.year, date.month, date.day, 8, 0).toUtc();
+          baseTime = DateTime(date.year, date.month, date.day, 8, 0);
         }
       }
 

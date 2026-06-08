@@ -92,6 +92,12 @@ class InAppNotificationService {
               now.add(const Duration(minutes: 2));
           _localNotificationService.cancelOne(intake.notificationId);
           _alarmController.add(intake);
+          // If the 5-min advance notice was missed (demo inserts < 5 min out),
+          // add to notification center now so the bell always has an entry.
+          if (!_notifiedIds.contains(intake.notificationId)) {
+            _notifiedIds.add(intake.notificationId);
+            _notificationController.add(intake);
+          }
         } else if (now.isAfter(nextAlarm) ||
             now.isAtSameMomentAs(nextAlarm)) {
           _nextAlarmTime[intake.notificationId] =
