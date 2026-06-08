@@ -21,4 +21,8 @@ class RutinaRepoImpl implements RutinaRepo {
   Future<String> remindLater(String notificationId) {
     return _dataSource.remindLater(notificationId);
   }
+
+  @override
+  Stream<List<RutinaMedicamentoModel>> get todayRutinaStream =>
+      _dataSource.todayRutinaStream;
 }
