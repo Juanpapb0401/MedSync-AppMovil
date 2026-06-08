@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../components/app_colors.dart';
 import '../../domain/model/rutina_medicamento_model.dart';
@@ -25,6 +26,7 @@ class _ConfirmarTomaScreenState extends State<ConfirmarTomaScreen>
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -36,6 +38,7 @@ class _ConfirmarTomaScreenState extends State<ConfirmarTomaScreen>
 
   @override
   void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _pulseController.dispose();
     super.dispose();
   }

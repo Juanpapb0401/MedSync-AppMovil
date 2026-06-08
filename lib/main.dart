@@ -30,6 +30,7 @@ import 'features/treatment/ui/screens/edit_treatment_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'presentation/screens/components_preview_screen.dart';
 import 'package:medsync/features/rutina/domain/services/in_app_notification_service.dart';
+import 'package:medsync/features/rutina/domain/services/local_notification_service.dart';
 import 'package:medsync/features/rutina/ui/bloc/notification_center_cubit.dart';
 import 'package:medsync/di/service_locator.dart';
 import 'components/global_notification_wrapper.dart';
@@ -45,8 +46,11 @@ void main() async {
 
   // Initialize dependencies before running the app (dependency injection setup)
   await initDependencies();
-  
-  // Start the background notification service
+
+  // Initialize OS notification service (must happen before runApp so that
+  // notification taps while the app is closed are handled correctly)
+  await sl<LocalNotificationService>().init(navigatorKey);
+  sl<LocalNotificationService>().start(sl());
   sl<InAppNotificationService>().start();
 
   final prefs = await SharedPreferences.getInstance();

@@ -1,9 +1,11 @@
 import 'dart:async';
 import '../model/rutina_medicamento_model.dart';
 import '../usecases/watch_today_rutina_usecase.dart';
+import 'local_notification_service.dart';
 
 class InAppNotificationService {
   final WatchTodayRutinaUsecase _watchTodayRutinaUsecase;
+  final LocalNotificationService _localNotificationService;
 
   Timer? _timer;
   StreamSubscription<List<RutinaMedicamentoModel>>? _rutinaSubscription;
@@ -22,7 +24,10 @@ class InAppNotificationService {
       _notificationController.stream;
   Stream<RutinaMedicamentoModel> get alarmStream => _alarmController.stream;
 
-  InAppNotificationService(this._watchTodayRutinaUsecase);
+  InAppNotificationService(
+    this._watchTodayRutinaUsecase,
+    this._localNotificationService,
+  );
 
   void start() {
     if (_isRunning) return;
@@ -85,6 +90,7 @@ class InAppNotificationService {
         if (nextAlarm == null) {
           _nextAlarmTime[intake.notificationId] =
               now.add(const Duration(minutes: 2));
+          _localNotificationService.cancelOne(intake.notificationId);
           _alarmController.add(intake);
         } else if (now.isAfter(nextAlarm) ||
             now.isAtSameMomentAs(nextAlarm)) {

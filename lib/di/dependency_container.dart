@@ -73,6 +73,7 @@ import 'package:medsync/features/rutina/domain/usecases/remind_later_usecase.dar
 import 'package:medsync/features/rutina/domain/usecases/update_intake_status_usecase.dart';
 import 'package:medsync/features/rutina/domain/usecases/watch_today_rutina_usecase.dart';
 import 'package:medsync/features/rutina/domain/services/in_app_notification_service.dart';
+import 'package:medsync/features/rutina/domain/services/local_notification_service.dart';
 
 // -------------------------- bloc --------------------------
 import 'package:medsync/features/rutina/ui/bloc/rutina_bloc.dart';
@@ -142,7 +143,8 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton(() => UpdateIntakeStatusUsecase(sl()));
     sl.registerLazySingleton(() => RemindLaterUsecase(sl()));
     sl.registerLazySingleton(() => WatchTodayRutinaUsecase(sl()));
-    sl.registerLazySingleton(() => InAppNotificationService(sl()));
+    sl.registerLazySingleton(() => LocalNotificationService());
+    sl.registerLazySingleton(() => InAppNotificationService(sl(), sl()));
     sl.registerLazySingleton(() => NotificationCenterCubit(sl()));
     sl.registerFactory<RutinaBloc>(() => RutinaBloc(sl(), sl(), sl(), sl()));
 
