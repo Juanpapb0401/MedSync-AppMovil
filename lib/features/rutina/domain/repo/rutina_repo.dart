@@ -4,4 +4,5 @@ abstract class RutinaRepo {
   Future<List<RutinaMedicamentoModel>> getDailyRutina(DateTime date);
   Future<void> updateIntakeStatus(String notificationId, String newStatus);
   Future<String> remindLater(String notificationId);
+  Stream<List<RutinaMedicamentoModel>> get todayRutinaStream;
 }

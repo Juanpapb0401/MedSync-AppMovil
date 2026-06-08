@@ -1,3 +1,5 @@
+import 'package:medsync/di/service_locator.dart';
+
 // ========================== Auth ==========================
 // -------------------------- data --------------------------
 import 'package:medsync/features/auth/data/repo/auth_repo_impl.dart';
@@ -69,6 +71,7 @@ import 'package:medsync/features/rutina/domain/repo/rutina_repo.dart';
 import 'package:medsync/features/rutina/domain/usecases/get_daily_rutina_usecase.dart';
 import 'package:medsync/features/rutina/domain/usecases/remind_later_usecase.dart';
 import 'package:medsync/features/rutina/domain/usecases/update_intake_status_usecase.dart';
+import 'package:medsync/features/rutina/domain/usecases/watch_today_rutina_usecase.dart';
 import 'package:medsync/features/rutina/domain/services/in_app_notification_service.dart';
 
 // -------------------------- bloc --------------------------
@@ -90,7 +93,6 @@ import 'package:medsync/features/treatment/ui/bloc/create_treatment_bloc.dart';
 import 'package:medsync/features/treatment/ui/bloc/treatment_summary_bloc.dart';
 import 'package:medsync/features/treatment/ui/bloc/treatments_list_bloc.dart';
 import 'package:medsync/features/rutina/ui/bloc/notification_center_cubit.dart';
-import 'package:medsync/di/service_locator.dart';
 
 Future<void> initDependencies() async {
     // ========================== Auth ==========================
@@ -139,6 +141,7 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton(() => GetDailyRutinaUsecase(sl()));
     sl.registerLazySingleton(() => UpdateIntakeStatusUsecase(sl()));
     sl.registerLazySingleton(() => RemindLaterUsecase(sl()));
+    sl.registerLazySingleton(() => WatchTodayRutinaUsecase(sl()));
     sl.registerLazySingleton(() => InAppNotificationService(sl()));
     sl.registerLazySingleton(() => NotificationCenterCubit(sl()));
     sl.registerFactory<RutinaBloc>(() => RutinaBloc(sl(), sl(), sl(), sl()));
