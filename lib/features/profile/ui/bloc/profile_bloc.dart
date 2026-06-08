@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/model/profile_model.dart';
 import '../../domain/usecases/get_profile_usecase.dart';
+import '../../domain/usecases/refresh_linking_code_usecase.dart';
 
 // Events
 abstract class ProfileEvent {}
@@ -26,13 +27,16 @@ class ProfileErrorState extends ProfileState {
 
 // BLoC
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GetProfileUsecase _usecase = GetProfileUsecase();
+  final GetProfileUsecase _getProfileUsecase;
+  final RefreshLinkingCodeUsecase _refreshLinkingCodeUsecase;
 
-  ProfileBloc() : super(ProfileInitialState()) {
+  ProfileBloc(this._getProfileUsecase, this._refreshLinkingCodeUsecase)
+    : super(ProfileInitialState()) {
     on<LoadProfileEvent>((event, emit) async {
       emit(ProfileLoadingState());
       try {
-        final profile = await _usecase.execute();
+        await _refreshLinkingCodeUsecase.execute();
+        final profile = await _getProfileUsecase.execute();
         emit(ProfileLoadedState(profile));
       } catch (_) {
         emit(ProfileErrorState('No se pudo cargar el perfil'));

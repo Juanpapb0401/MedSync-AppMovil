@@ -44,9 +44,9 @@ class DashboardState {
 }
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  final _usecase = GetDailySummaryUsecase();
+  final GetDailySummaryUsecase _usecase;
 
-  DashboardBloc()
+  DashboardBloc(this._usecase)
       : super(DashboardState(selectedDate: DateTime.now())) {
     on<DashboardLoadData>(_onLoad);
     on<DashboardPreviousDay>(_onPreviousDay);

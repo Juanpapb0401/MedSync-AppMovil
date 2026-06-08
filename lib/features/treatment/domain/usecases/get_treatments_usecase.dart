@@ -1,11 +1,10 @@
 import '../model/treatment_list_model.dart';
 import '../repo/treatment_repo.dart';
-import '../../data/repo/treatment_repo_impl.dart';
 
 class GetTreatmentsUsecase {
   final TreatmentRepo _repo;
 
-  GetTreatmentsUsecase() : _repo = TreatmentRepoImpl();
+  GetTreatmentsUsecase(this._repo);
 
   Future<TreatmentListResultModel> execute() => _repo.getTreatments();
 }

@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:medsync/di/service_locator.dart';
+import 'package:medsync/features/auth/ui/bloc/logout_bloc.dart';
 import '../../../../components/app_colors.dart';
 
 class LogoutButton extends StatelessWidget {
   const LogoutButton({super.key});
 
   void _showLogoutDialog(BuildContext context) {
+    final logoutBloc = context.read<LogoutBloc>();
     showDialog(
       context: context,
-      builder: (context) => Dialog(
+      builder: (_) => BlocProvider.value(
+        value: logoutBloc,
+        child: BlocListener<LogoutBloc, LogoutState>(
+          listener: (context, state) {
+            if (state is LogoutSuccess) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/auth/login',
+                (route) => false,
+              );
+            }
+          },
+          child: Dialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -84,15 +99,8 @@ class LogoutButton extends StatelessWidget {
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        await Supabase.instance.client.auth.signOut();
-                        if (context.mounted) {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/auth/login',
-                            (route) => false,
-                          );
-                        }
-                      },
+                      onPressed: () =>
+                          context.read<LogoutBloc>().add(LogoutRequested()),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFEF4444),
                         shape: RoundedRectangleBorder(
@@ -139,14 +147,19 @@ class LogoutButton extends StatelessWidget {
           ),
         ),
       ),
+          ),
+        ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showLogoutDialog(context),
-      child: Container(
+    return BlocProvider(
+      create: (_) => sl<LogoutBloc>(),
+      child: Builder(
+        builder: (context) => GestureDetector(
+          onTap: () => _showLogoutDialog(context),
+          child: Container(
         width: double.infinity,
         height: 59,
         decoration: BoxDecoration(
@@ -170,6 +183,8 @@ class LogoutButton extends StatelessWidget {
           ],
         ),
       ),
+          ),
+        ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ForgotPasswordRepo {
+class ForgotPasswordDataSource {
   Future<void> sendResetEmail(String email) async {
     await Supabase.instance.client.auth.resetPasswordForEmail(email);
   }

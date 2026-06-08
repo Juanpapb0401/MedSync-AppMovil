@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../profile/domain/model/profile_model.dart';
+import '../../../profile/domain/utils/linking_code_generator.dart';
 
 class AuthDataSource {
   Future<ProfileModel> login(String email, String password) async {
@@ -203,18 +204,8 @@ class AuthDataSource {
       'email': email,
       'password': password,
       'type': type,
-      'linking_code': type == 'paciente' ? _resolveLinkingCode(id) : null,
+      'linking_code': type == 'paciente' ? LinkingCodeGenerator.generate(id) : null,
     }, onConflict: 'id');
-  }
-
-  String _resolveLinkingCode(String profileId) {
-    final digits = profileId.replaceAll(RegExp(r'\D'), '');
-    final codeDigits = digits.isEmpty
-        ? '0000'
-        : digits.length >= 4
-        ? digits.substring(0, 4)
-        : digits.padLeft(4, '0');
-    return 'MED-$codeDigits';
   }
 
   Future<void> _ensureEmailAvailable(String email) async {

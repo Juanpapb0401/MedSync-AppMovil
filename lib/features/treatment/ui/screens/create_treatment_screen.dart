@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:medsync/di/service_locator.dart';
 import '../../../../components/components.dart';
 import '../bloc/create_treatment_bloc.dart';
 import '../widgets/treatment_form_header.dart';
@@ -27,7 +29,7 @@ class _CreateTreatmentScreenState extends State<CreateTreatmentScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CreateTreatmentBloc(),
+      create: (context) => sl<CreateTreatmentBloc>(),
       child: BlocConsumer<CreateTreatmentBloc, CreateTreatmentState>(
         listener: (context, state) {
           if (state.isSuccess) {

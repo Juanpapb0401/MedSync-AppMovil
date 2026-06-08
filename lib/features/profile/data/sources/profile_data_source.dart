@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/model/profile_model.dart';
+import '../../domain/utils/linking_code_generator.dart';
 
 class ProfileDataSource {
   final _client = Supabase.instance.client;
@@ -18,19 +19,7 @@ class ProfileDataSource {
     final profileId = data['id'] as String;
     final type = data['type'] as String;
     final storedLinkingCode = data['linking_code'] as String?;
-    final linkingCode = _resolveLinkingCode(profileId, storedLinkingCode);
-
-    if (type == 'paciente' && storedLinkingCode != linkingCode) {
-      try {
-        await _client
-            .from('profile')
-            .update({'linking_code': linkingCode})
-            .eq('id', profileId);
-      } catch (_) {
-        // Best-effort persistence: the screen can still render the code even if
-        // the database update is blocked by permissions or the column is pending.
-      }
-    }
+    final linkingCode = LinkingCodeGenerator.resolve(profileId, storedLinkingCode);
 
     LinkedPatientModel? linkedPatient;
     String? linkedCaregiverName;
@@ -52,7 +41,7 @@ class ProfileDataSource {
         linkedPatient = LinkedPatientModel(
           id: patientData['id'] as String,
           fullName: patientData['full_name'] as String,
-          linkingCode: _resolveLinkingCode(
+          linkingCode: LinkingCodeGenerator.resolve(
             patientData['id'] as String,
             patientData['linking_code'] as String?,
           ),
@@ -154,18 +143,28 @@ class ProfileDataSource {
     });
   }
 
-  String _resolveLinkingCode(String profileId, String? storedLinkingCode) {
-    final cleanedStoredCode = storedLinkingCode?.trim();
-    if (cleanedStoredCode != null && cleanedStoredCode.isNotEmpty) {
-      return cleanedStoredCode;
-    }
+  Future<void> refreshLinkingCodeIfNeeded() async {
+    final authUser = _client.auth.currentSession?.user;
+    if (authUser == null) throw Exception('No active session');
 
-    final digits = profileId.replaceAll(RegExp(r'\D'), '');
-    final codeDigits = digits.isEmpty
-        ? '0000'
-        : digits.length >= 4
-        ? digits.substring(0, 4)
-        : digits.padLeft(4, '0');
-    return 'MED-$codeDigits';
+    final data = await _client
+        .from('profile')
+        .select('id, type, linking_code')
+        .eq('email', authUser.email!)
+        .single();
+
+    final profileId = data['id'] as String;
+    final type = data['type'] as String;
+    final storedLinkingCode = data['linking_code'] as String?;
+    final linkingCode = LinkingCodeGenerator.resolve(profileId, storedLinkingCode);
+
+    if (type == 'paciente' && storedLinkingCode != linkingCode) {
+      try {
+        await _client
+            .from('profile')
+            .update({'linking_code': linkingCode})
+            .eq('id', profileId);
+      } catch (_) {}
+    }
   }
 }

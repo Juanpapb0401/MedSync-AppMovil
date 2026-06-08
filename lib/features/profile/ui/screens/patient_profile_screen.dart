@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:medsync/di/service_locator.dart';     
 import '../../../../components/app_colors.dart';
 import '../../../../components/main_nav_bar.dart';
 import '../bloc/profile_bloc.dart';
@@ -16,7 +18,7 @@ class PatientProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProfileBloc()..add(LoadProfileEvent()),
+      create: (_) => sl<ProfileBloc>()..add(LoadProfileEvent()),
       child: const _PatientProfileView(),
     );
   }

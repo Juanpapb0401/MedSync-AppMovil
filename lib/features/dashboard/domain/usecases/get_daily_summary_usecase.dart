@@ -1,9 +1,10 @@
 import '../model/daily_summary_model.dart';
 import '../repo/dashboard_repo.dart';
-import '../../data/repo/dashboard_repo_impl.dart';
 
 class GetDailySummaryUsecase {
-  final DashboardRepo _repo = DashboardRepoImpl();
+  final DashboardRepo _repo;
+
+  GetDailySummaryUsecase(this._repo);
 
   Future<DailySummaryModel> execute(DateTime date) =>
       _repo.getDailySummary(date);

@@ -38,9 +38,10 @@ class CaregiverRegisterFailState extends CaregiverRegisterState {
 
 class CaregiverRegisterBloc
     extends Bloc<CaregiverRegisterEvent, CaregiverRegisterState> {
-  final CaregiverRegisterUsecase _usecase = CaregiverRegisterUsecase();
+  final CaregiverRegisterUsecase _usecase;
 
-  CaregiverRegisterBloc() : super(CaregiverRegisterInitialState()) {
+  CaregiverRegisterBloc(this._usecase)
+    : super(CaregiverRegisterInitialState()) {
     on<CaregiverRegisterSubmitEvent>((event, emit) async {
       emit(CaregiverRegisterLoadingState());
       try {

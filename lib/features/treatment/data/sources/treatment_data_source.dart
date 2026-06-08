@@ -95,11 +95,12 @@ class TreatmentDataSource {
     if (treatment.frequency.contains('12')) intervalHours = 12;
     if (treatment.frequency.contains('24')) intervalHours = 24;
 
+    final startTime = _normalizeStartTime(treatment.startTime);
+
     await _client.from('schedule').insert({
       'frequency_type': 'intervalo',
       'interval_hours': intervalHours,
-      if (_normalizeStartTime(treatment.startTime) != null)
-        'time': _normalizeStartTime(treatment.startTime),
+      'time': ?startTime,
       'treatment_id': treatmentId,
     });
 

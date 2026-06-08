@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/model/treatment_model.dart';
-import '../../data/repo/treatment_repo_impl.dart';
+import '../../domain/usecases/create_treatment_usecase.dart';
 
 // Events
 abstract class CreateTreatmentEvent {}
@@ -93,9 +93,9 @@ class CreateTreatmentState {
 
 // Bloc
 class CreateTreatmentBloc extends Bloc<CreateTreatmentEvent, CreateTreatmentState> {
-  final _repo = TreatmentRepoImpl();
+  final CreateTreatmentUsecase _usecase;
 
-  CreateTreatmentBloc() : super(CreateTreatmentState()) {
+  CreateTreatmentBloc(this._usecase) : super(CreateTreatmentState()) {
     on<UpdateMedicineName>((event, emit) => emit(state.copyWith(medicineName: event.name)));
     on<UpdateDose>((event, emit) => emit(state.copyWith(dose: event.dose)));
     on<UpdateUnit>((event, emit) => emit(state.copyWith(unit: event.unit)));
@@ -132,7 +132,7 @@ class CreateTreatmentBloc extends Bloc<CreateTreatmentEvent, CreateTreatmentStat
           restrictions: state.restrictions,
         );
         
-        await _repo.saveTreatment(treatment);
+        await _usecase.execute(treatment);
         emit(state.copyWith(isLoading: false, isSuccess: true));
       } catch (e) {
         emit(state.copyWith(

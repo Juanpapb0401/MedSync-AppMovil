@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../profile/domain/usecases/get_profile_usecase.dart';
+import '../../domain/usecases/get_linking_code_usecase.dart';
 
 abstract class CodeBindingEvent {}
 
@@ -25,23 +24,14 @@ class CodeBindingErrorState extends CodeBindingState {
 }
 
 class CodeBindingBloc extends Bloc<CodeBindingEvent, CodeBindingState> {
-  final GetProfileUsecase _usecase = GetProfileUsecase();
+  late final GetLinkingCodeUsecase _usecase;
 
-  CodeBindingBloc() : super(CodeBindingInitialState()) {
+  CodeBindingBloc(this._usecase) : super(CodeBindingInitialState()) {
     on<LoadCodeBindingEvent>((event, emit) async {
       emit(CodeBindingLoadingState());
       try {
-        final profile = await _usecase.execute();
-        if (!profile.isPatient) {
-          emit(
-            CodeBindingErrorState(
-              'No se pudo cargar la información del código de vinculación',
-            ),
-          );
-          return;
-        }
-
-        emit(CodeBindingLoadedState(profile.linkingCode));
+        final code = await _usecase.execute();
+        emit(CodeBindingLoadedState(code));
       } catch (_) {
         emit(
           CodeBindingErrorState(
