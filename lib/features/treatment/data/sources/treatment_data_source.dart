@@ -186,6 +186,23 @@ class TreatmentDataSource {
       }).toList();
       await _client.from('restriction').insert(restrictionsToInsert);
     }
+
+    final updatedSchedules = await _client
+        .from('schedule')
+        .select('id')
+        .eq('treatment_id', treatmentId);
+
+    final now = DateTime.now().toUtc();
+    final startOfToday = DateTime.utc(now.year, now.month, now.day);
+
+    for (final sched in updatedSchedules as List) {
+      await _client
+          .from('notification')
+          .delete()
+          .eq('schedule_id', sched['id'] as String)
+          .inFilter('status', ['pendiente', 'sin_confirmar'])
+          .gte('scheduled_datetime', startOfToday.toIso8601String());
+    }
   }
 
   Future<TreatmentListResultModel> getTreatments() async {
